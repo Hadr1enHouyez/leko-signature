@@ -171,14 +171,14 @@
 
     <div class="card">
       <h2>9 · Version mobile (plan de travail 02)</h2>
-      <label style="display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-size:13px;cursor:pointer"><input type="checkbox" id="f-mobile" data-key="mobile" style="margin-top:3px"> <span><strong>Afficher la version mobile sur les téléphones</strong> — tuile 224 × 133 avec le logo à droite du téléphone, textes agrandis, visuel recadré, empilés. Elle remplace la version desktop dès que l'écran du destinataire fait moins de 540 px de large.</span></label>
+      <div class="note warn" style="margin-top:0"><strong>À laisser décochée pour une signature collée</strong> dans Outlook Mac, Apple Mail ou Gmail : ces éditeurs suppriment le bloc de style qui commande la bascule. La signature reste alors la version desktop, seule et intacte, sur tous les appareils (réduite à l'écran sur téléphone). Aucune méthode par collage ne permet d'afficher une mise en page différente sur mobile.</div>
+      <label style="display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-size:13px;cursor:pointer;margin-top:10px"><input type="checkbox" id="f-mobile" data-key="mobile" style="margin-top:3px"> <span><strong>Ajouter la version mobile</strong> — tuile 224 × 133 avec le logo à droite du téléphone, textes agrandis, visuel recadré. Affichée à la place du desktop sous 540 px de large chez les destinataires, <strong>uniquement si le code est installé sans passer par un éditeur</strong> : fichier <code>.htm</code> dans Outlook Windows, fichier <code>.mailsignature</code> dans Apple Mail (procédure dans le README), ou déploiement par un outil de signature serveur (Exclaimer, CodeTwo, règle de flux Microsoft 365). Si le code est collé malgré tout, le bloc mobile reste masqué : jamais deux versions.</span></label>
       <div class="radio" id="mscale-box" style="margin-top:10px">
         <label><input type="radio" name="mscale" value="1" data-key="mscale"> <span><strong>100 %</strong> — 234 × 288 px (taille du fichier ×2)</span></label>
         <label><input type="radio" name="mscale" value="1.25" data-key="mscale"> <span><strong>125 %</strong> — 293 × 360 px</span></label>
-        <label><input type="radio" name="mscale" value="1.4" data-key="mscale"> <span><strong>140 %</strong> — 328 × 403 px (recommandé : tient dans la zone de lecture de tous les téléphones, y compris les petits Android)</span></label>
+        <label><input type="radio" name="mscale" value="1.4" data-key="mscale"> <span><strong>140 %</strong> — 328 × 403 px (recommandé)</span></label>
         <label><input type="radio" name="mscale" value="1.5" data-key="mscale"> <span><strong>150 %</strong> — 352 × 432 px</span></label>
       </div>
-      <div class="hint">La bascule n'utilise aucun bloc de style : elle repose sur la largeur d'écran (<code>vw</code>) dans des styles inline, que les éditeurs de signature conservent au collage. Prise en charge : Apple Mail, iOS Mail, Gmail (comptes Google), Outlook Mac, Outlook iOS/Android, Outlook.com et nouveau Outlook. Outlook classique Windows affiche toujours la version desktop. Seule exception connue : l'application Gmail utilisée avec un compte non Google (IMAP), qui ne lit pas <code>calc()</code> et afficherait les deux versions l'une sous l'autre.</div>
     </div>
 
     <div class="actions">
@@ -248,6 +248,15 @@
           <li><strong>Décochez</strong> « Toujours utiliser la police par défaut » puis collez (⌘V) dans la zone de droite.</li>
           <li>Si l'aperçu semble tronqué dans les réglages, c'est normal : envoyez-vous un test.</li>
         </ol>
+        <p style="font-size:13px;margin:8px 0 0"><strong>Méthode fichier (conserve le code intact, nécessaire pour la version mobile)</strong> : créer une signature vide nommée « LEKO », quitter Mail, ouvrir <code>~/Library/Mail/V10/MailData/Signatures/</code> (le dossier <code>V10</code> peut être <code>V9</code> ou <code>V11</code> selon macOS), ouvrir le fichier <code>.mailsignature</code> le plus récent dans un éditeur de texte, remplacer tout ce qui suit la ligne vide après les en-têtes par le contenu de « Copier le code HTML », enregistrer, puis verrouiller le fichier (Lire les informations › Verrouillé) avant de relancer Mail.</p>
+      </details>
+      <details>
+        <summary>Déploiement centralisé (IT) — la seule voie pour la version mobile chez tous</summary>
+        <ol>
+          <li>Un outil de signature serveur (Exclaimer, CodeTwo) ou une règle de flux Microsoft 365 « appliquer une clause » insère le code HTML complet au moment de l'envoi, quel que soit le client de l'expéditeur.</li>
+          <li>Le bloc de style et la version mobile sont alors conservés pour tous les collaborateurs, sans manipulation individuelle, et les mises à jour se font en un point.</li>
+          <li>Utiliser « Télécharger signature.htm » avec la version mobile cochée comme modèle ; les champs peuvent être remplacés par les attributs d'annuaire de l'outil.</li>
+        </ol>
       </details>
       <details>
         <summary>iPhone / iPad (Mail, Outlook mobile)</summary>
@@ -307,7 +316,7 @@ const DEFAULTS = {
   preset:"faithful",
   scale:"1",
   webfont:false,
-  mobile:true,
+  mobile:false,
   mscale:"1.4"
 };
 
@@ -329,7 +338,7 @@ function dims(){
   return d;
 }
 function scaledPreset(p,s){const o={}; for(const k in p){ o[k]= k.startsWith("FS_") ? Math.round(p[k]*s*10)/10 : Math.round(p[k]*s); } o.LS_NAME=0; o.LS_TITLE=0; o.LS_CONTACT=Math.round(0.15*s*100)/100; return o;}
-const STORE_KEY="leko-signature-2026-v6c";
+const STORE_KEY="leko-signature-2026-v6d";
 const SHARE_KEYS=["name","title1","title2","email","phone","url","theme","preset","scale","assets","webfont","visualMode","visualUrl","visualUrlMobile","mobile","mscale"];
 function stateFromQuery(){
   const q=new URLSearchParams(location.search), o={};
@@ -410,8 +419,7 @@ function mobileTable(theme, src, v){
 }
 function mobileBlock(theme, src, v){
   if(!state.mobile) return "";
-  const md=mdims();
-  return switchWrap(mobileTable(theme, src, v), "mobile", md.outerW, md.outerH);
+  return '<!--[if !mso]><!--><div class="lk-mob" style="display:none;max-height:0;overflow:hidden;mso-hide:all;">'+mobileTable(theme, src, v)+'</div><!--<![endif]-->';
 }
 function textRows(v, p, d, ptName, logoImg, fluid){
   const cell=(pt,fs,lh,fw,ls,inner)=>'<tr><td class="lk-txt" style="padding:'+pt+'px 0 0 0;font-family:'+FONT_STACK+';font-size:'+fs+'px;line-height:'+lh+'px;mso-line-height-rule:exactly;font-weight:'+fw+';letter-spacing:'+ls+'px;color:'+v.TXT+';">'+inner+'</td></tr>';
@@ -443,8 +451,8 @@ function tileColumn(theme, src, d, p, v){
   return '<!--[if mso]>'+mso+'<![endif]--><!--[if !mso]><!-->'+std+'<!--<![endif]-->';
 }
 function desktopTable(theme, src, d, p, v){
-  const minW = state.mobile ? "" : "min-width:"+d.outerW+"px;";
-  const minV = state.mobile ? "" : "min-width:"+d.visW+"px;";
+  const minW = "min-width:"+d.outerW+"px;";
+  const minV = "min-width:"+d.visW+"px;";
   const spacer='<td width="'+d.gap+'" style="width:'+d.gap+'px;padding:0;font-size:1px;line-height:1px;mso-line-height-rule:exactly;">&nbsp;</td>';
   const visual='<td width="'+d.visW+'" valign="top" style="width:'+d.visW+'px;'+minV+'padding:0;line-height:0;font-size:0;">'
     + '<a href="'+v.URL+'" target="_blank" style="display:block;text-decoration:none;border:0;"><img src="'+v.IMG+'" width="'+d.visW+'" height="'+d.visH+'" alt="LEKO — lekolabs.com" title="Découvrir LEKO" border="0" style="display:block;width:'+d.visW+'px;height:'+d.visH+'px;border:0;outline:none;text-decoration:none;"></a></td>';
@@ -454,16 +462,7 @@ function desktopTable(theme, src, d, p, v){
     + '<tr>'+tileColumn(theme, src, d, p, v)+spacer+visual+'</tr>'
     + '</table></td></tr></table>';
 }
-// Bascule desktop / mobile sans bloc <style> : chaque version est dans un conteneur dont largeur et hauteur valent
-// calc((100vw - 539px) * 1000) [desktop] ou calc((540px - 100vw) * 1000) [mobile], bornées entre 0 et la taille exacte
-// du bloc. Sur un écran de moins de 540 px le desktop mesure 0 x 0 et le mobile sa taille, et inversement.
-// Word (Outlook Windows) ignore calc, vw, max-* et overflow : il affiche le desktop et masque le mobile via mso-hide:all.
-const BP=540;
-function switchWrap(inner, kind, w, h){
-  const expr = kind==="desktop" ? "calc((100vw - "+(BP-1)+"px) * 1000)" : "calc(("+BP+"px - 100vw) * 1000)";
-  const hide = kind==="mobile" ? "mso-hide:all;" : "";
-  return '<div class="lk-'+(kind==="desktop"?"desk-wrap":"mob")+'" style="width:'+expr+';min-width:0;max-width:'+w+'px;height:'+expr+';min-height:0;max-height:'+h+'px;overflow:hidden;'+hide+'">'+inner+'</div>';
-}
+const RESP_STYLE='<style type="text/css">\n@media only screen and (max-width:540px){\n  .lk-desk{display:none !important;}\n  .lk-mob{display:block !important;max-height:none !important;overflow:visible !important;}\n}\n</style>\n';
 function fontStyle(){
   if(!state.webfont) return "";
   const base=assetsBase();
@@ -485,10 +484,10 @@ function buildHtml(forExport, themeOverride){
     TILE_BG: theme==="dark" ? "#ffffff" : "#000000",
     TXT: theme==="dark" ? "#000000" : "#ffffff"
   };
-  const style = fontStyle() + (theme==="auto" ? AUTO_STYLE_TPL : "");
+  const style = fontStyle() + (theme==="auto" ? AUTO_STYLE_TPL : "") + (state.mobile ? RESP_STYLE : "");
   const desk = desktopTable(theme, src, d, p, v);
   if(!state.mobile) return (style + desk).trim();
-  return (style + switchWrap(desk, "desktop", d.outerW, d.outerH) + "\n" + mobileBlock(theme, src, v)).trim();
+  return (style + desk + "\n" + mobileBlock(theme, src, v)).trim();
 }
 function fullDocument(inner){
   return '<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<meta name="color-scheme" content="light dark">\n<meta name="supported-color-schemes" content="light dark">\n<meta name="x-apple-disable-message-reformatting">\n<!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->\n<title>Signature LEKO</title>\n</head>\n<body style="margin:0;padding:0;">\n'+inner+'\n</body>\n</html>\n';

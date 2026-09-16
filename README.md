@@ -72,22 +72,26 @@ Il n'existe donc aucun moyen de garantir la police dans tous les clients : c'est
 
 **Hébergement des polices** : le serveur doit renvoyer l'en-tête `Access-Control-Allow-Origin: *` sur le dossier `fonts/` (les navigateurs et WebKit refusent les polices d'une autre origine sans cet en-tête) et le type MIME `font/woff2`.
 
-## Version mobile (plan de travail 02)
+## Version mobile (plan de travail 02) : ce qui est possible
 
-Sur les téléphones, la signature affiche la mise en page du plan de travail 02 : tuile 224 × 133 (nom, fonctions, e-mail, téléphone avec le logo à sa droite) puis visuel 224 × 140, empilés. Réglage par défaut 140 % (328 × 403 px), qui tient dans la zone de lecture de tous les téléphones ; 100 %, 125 % et 150 % sont disponibles (étape 9).
+**Par défaut, la signature est la version desktop, seule, sur tous les appareils.** Sur téléphone, les clients la réduisent à la largeur de l'écran (Apple Mail, Outlook mobile) ou la mettent à l'échelle (Gmail). Elle reste intacte grâce aux largeurs minimales du tableau.
 
-**Mécanisme, sans aucun bloc de style.** Les éditeurs de signature (Outlook Mac, Apple Mail, Gmail) suppriment les blocs `<style>` au collage : une media query ne survit donc pas au client d'envoi. La bascule repose uniquement sur des styles inline lus par tous les moteurs web : chaque version est placée dans un conteneur dont la largeur et la hauteur valent `calc((100vw - 539px) * 1000)` pour le desktop et `calc((540px - 100vw) * 1000)` pour le mobile, bornées par `min-width/min-height:0` et `max-width/max-height` égaux à la taille exacte du bloc, avec `overflow:hidden`. Sur un écran de moins de 540 px de large (`vw` = largeur d'écran), le conteneur desktop mesure 0 × 0 et le conteneur mobile sa taille pleine ; au-dessus, l'inverse.
+**Pourquoi il n'y a pas de bascule automatique au collage.** Afficher une mise en page différente sur mobile exige une media query, donc un bloc `<style>`. Les éditeurs de signature d'Outlook Mac, d'Apple Mail et de Gmail suppriment ce bloc au collage, ainsi que tout mécanisme de substitution (`calc()`, `vw`) ; testé le 16 septembre 2026 : soit le bloc mobile reste masqué, soit les deux versions s'affichent. Aucune méthode par collage ne peut faire mieux, quelle que soit la signature.
 
-| Destinataire | Rendu |
-|---|---|
-| Apple Mail iOS, Gmail iOS/Android (compte Google), Outlook iOS/Android | Plan 02 |
-| Apple Mail macOS, Gmail web, Outlook Mac, Outlook.com, nouveau Outlook, iPad | Desktop 500 × 150 |
-| Outlook classique Windows (Word ignore `calc`, `vw`, `max-*`, `overflow`) | Desktop ; le bloc mobile est masqué par `mso-hide:all` |
-| Application Gmail avec un compte non Google (IMAP) | `calc()` non lu : les deux versions s'affichent l'une sous l'autre. Seul cas connu. |
+**L'option « Ajouter la version mobile » (étape 9)** insère la mise en page du plan de travail 02 (tuile 224 × 133, logo à droite du téléphone, textes agrandis, visuel recadré, 140 % par défaut = 328 × 403 px) dans un bloc masqué, révélé sous 540 px par une media query. Elle fonctionne quand le code est installé **sans passer par un éditeur** :
 
-Sans la version mobile (case décochée), le code redevient le seul tableau desktop, avec des largeurs minimales qui empêchent Gmail mobile d'écraser les colonnes.
+| Méthode | Code intact | Version mobile chez les destinataires |
+|---|---|---|
+| Outlook Windows : fichier `LEKO.htm` dans `%APPDATA%\Microsoft\Signatures` | Oui | Oui |
+| Apple Mail macOS : fichier `.mailsignature` (procédure ci-dessous) | Oui | Oui |
+| Outil de signature serveur (Exclaimer, CodeTwo) ou règle de flux Microsoft 365 | Oui | Oui, pour tous les collaborateurs, quel que soit leur client |
+| Collage dans Outlook Mac, nouveau Outlook, Apple Mail, Gmail | Non | Non : le bloc mobile reste masqué, la version desktop s'affiche partout |
 
-L'aperçu du générateur propose deux vues : desktop et téléphone (plan 02). Pour un visuel personnalisé, le générateur produit les deux recadrages (855 × 420 et 672 × 420, suffixe `-mobile`).
+Si le code est collé malgré l'option cochée, il n'y a jamais deux versions : le bloc mobile porte `display:none` en style inline et reste invisible.
+
+**Procédure Apple Mail (fichier).** Créer une signature vide nommée « LEKO » dans Mail › Réglages › Signatures, quitter Mail. Ouvrir `~/Library/Mail/V10/MailData/Signatures/` (le dossier `V10` peut être `V9` ou `V11` selon la version de macOS). Ouvrir le fichier `.mailsignature` le plus récent dans un éditeur de texte, remplacer tout ce qui suit la ligne vide après les en-têtes par le contenu de « Copier le code HTML » (version mobile cochée), enregistrer, puis verrouiller le fichier (Finder › Lire les informations › Verrouillé) pour que Mail ne le réécrive pas. Relancer Mail.
+
+**Recommandation pour l'entreprise.** Le seul moyen d'obtenir la version mobile chez tous les collaborateurs, y compris ceux qui envoient depuis Outlook Mac, est le déploiement centralisé : Exclaimer ou CodeTwo (abonnement par utilisateur, aperçu dans Outlook, champs remplis depuis l'annuaire) ou, sans coût, une règle de flux Microsoft 365 « appliquer une clause » qui ajoute le HTML à l'envoi (limites : signature ajoutée à la fin du message, non visible dans le brouillon). Le fichier `signature.htm` téléchargé avec la version mobile cochée sert de modèle.
 
 ## Taille d'affichage
 
