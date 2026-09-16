@@ -10,6 +10,8 @@ Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iO
 | `generateur.html` | **Point d'entrée pour les collaborateurs.** Formulaire (nom, fonctions, e-mail, téléphone, lien), choix du thème, aperçu en temps réel, copie de la signature, export `.htm`, composition d'un visuel personnalisé. Fonctionne hors ligne, à ouvrir dans Chrome, Edge ou Safari. |
 | `assets/` | Images **à héberger**, voir tableau ci-dessous. |
 | `signature-exemple.html` | Exemple complet du code généré (thème clair, champs neutres, images hébergées). |
+| `deploiement-m365.md` | Procédure pas à pas pour déployer la signature par une règle de flux Microsoft 365 (côté serveur, tous les clients), avec jetons d'annuaire et exception anti-doublon. |
+| `signature-m365.html` | Code prêt à coller dans la règle de flux : desktop + version mobile, jetons d'annuaire, 4 879 caractères (limite 5 000). Régénérable depuis le générateur avec d'autres réglages. |
 
 ### Assets
 
@@ -91,7 +93,7 @@ Si le code est collé malgré l'option cochée, il n'y a jamais deux versions : 
 
 **Procédure Apple Mail (fichier).** Créer une signature vide nommée « LEKO » dans Mail › Réglages › Signatures, quitter Mail. Ouvrir `~/Library/Mail/V10/MailData/Signatures/` (le dossier `V10` peut être `V9` ou `V11` selon la version de macOS). Ouvrir le fichier `.mailsignature` le plus récent dans un éditeur de texte, remplacer tout ce qui suit la ligne vide après les en-têtes par le contenu de « Copier le code HTML » (version mobile cochée), enregistrer, puis verrouiller le fichier (Finder › Lire les informations › Verrouillé) pour que Mail ne le réécrive pas. Relancer Mail.
 
-**Recommandation pour l'entreprise.** Le seul moyen d'obtenir la version mobile chez tous les collaborateurs, y compris ceux qui envoient depuis Outlook Mac, est le déploiement centralisé : Exclaimer ou CodeTwo (abonnement par utilisateur, aperçu dans Outlook, champs remplis depuis l'annuaire) ou, sans coût, une règle de flux Microsoft 365 « appliquer une clause » qui ajoute le HTML à l'envoi (limites : signature ajoutée à la fin du message, non visible dans le brouillon). Le fichier `signature.htm` téléchargé avec la version mobile cochée sert de modèle.
+**Recommandation pour l'entreprise.** Le seul moyen d'obtenir la version mobile chez tous les collaborateurs, y compris ceux qui envoient depuis Outlook Mac, est le déploiement centralisé : Exclaimer ou CodeTwo (abonnement par utilisateur, aperçu dans Outlook, champs remplis depuis l'annuaire) ou, sans coût, une règle de flux Microsoft 365 « appliquer une clause » qui ajoute le HTML à l'envoi (limites : signature ajoutée à la fin du message, non visible dans le brouillon). Procédure détaillée dans `deploiement-m365.md` ; le générateur fournit un export dédié (« Copier le code pour une règle de flux M365 », jetons d'annuaire, compteur de la limite de 5 000 caractères).
 
 ## Taille d'affichage
 

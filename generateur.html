@@ -255,8 +255,9 @@
         <ol>
           <li>Un outil de signature serveur (Exclaimer, CodeTwo) ou une règle de flux Microsoft 365 « appliquer une clause » insère le code HTML complet au moment de l'envoi, quel que soit le client de l'expéditeur.</li>
           <li>Le bloc de style et la version mobile sont alors conservés pour tous les collaborateurs, sans manipulation individuelle, et les mises à jour se font en un point.</li>
-          <li>Utiliser « Télécharger signature.htm » avec la version mobile cochée comme modèle ; les champs peuvent être remplacés par les attributs d'annuaire de l'outil.</li>
+          <li>Pour une règle de flux Microsoft 365 (gratuite, incluse dans Exchange Online), utiliser le bouton ci-dessous : il produit un code compact où nom, fonctions, e-mail et téléphone sont remplacés par les jetons d'annuaire <code>%%DisplayName%%</code>, <code>%%Title%%</code>, <code>%%Notes%%</code> (fonction FR), <code>%%WindowsEmailAddress%%</code> et <code>%%MobilePhone%%</code>. Limite Microsoft : 5 000 caractères. Procédure complète dans <code>deploiement-m365.md</code>.</li>
         </ol>
+        <div class="actions" style="margin-top:6px"><button id="btn-m365" class="secondary">Copier le code pour une règle de flux M365</button><span id="m365-count" class="hint" style="align-self:center"></span></div>
       </details>
       <details>
         <summary>iPhone / iPad (Mail, Outlook mobile)</summary>
@@ -463,6 +464,7 @@ function desktopTable(theme, src, d, p, v){
     + '</table></td></tr></table>';
 }
 const RESP_STYLE='<style type="text/css">\n@media only screen and (max-width:540px){\n  .lk-desk{display:none !important;}\n  .lk-mob{display:block !important;max-height:none !important;overflow:visible !important;}\n}\n</style>\n';
+const AUTO_STYLE_TPL = '<style type="text/css">\n@media (prefers-color-scheme: dark){\n  .lk-tile{background-color:#ffffff !important;}\n  .lk-txt,.lk-txt a{color:#000000 !important;}\n  .lk-l{display:none !important;}\n  .lk-d{display:block !important;max-height:none !important;overflow:visible !important;}\n}\n[data-ogsb] .lk-tile,[data-ogsc] .lk-tile{background-color:#ffffff !important;}\n[data-ogsc] .lk-txt,[data-ogsc] .lk-txt a{color:#000000 !important;}\n[data-ogsc] .lk-l{display:none !important;}\n[data-ogsc] .lk-d{display:block !important;max-height:none !important;overflow:visible !important;}\n</style>\n';
 function fontStyle(){
   if(!state.webfont) return "";
   const base=assetsBase();
@@ -489,6 +491,30 @@ function buildHtml(forExport, themeOverride){
   if(!state.mobile) return (style + desk).trim();
   return (style + desk + "\n" + mobileBlock(theme, src, v)).trim();
 }
+// Export pour règle de flux Microsoft 365 : code minifié (limite 5 000 caractères), champs remplacés par les jetons d'annuaire,
+// marqueur invisible pour l'exception anti-doublon. Sans bloc Outlook Windows conditionnel (Word affiche la cellule à coins carrés).
+const M365_MARK='LEKO-SIG-2026';
+function buildM365(){
+  let h = buildHtml(true);
+  h = h.replace(/<!--\[if mso\]>[\s\S]*?<!\[endif\]-->/g,"").replace(/<!--\[if !mso\]><!-->/g,"").replace(/<!--<!\[endif\]-->/g,"");
+  h = h.replace(/ role="presentation"/g,"").replace(/outline:none;text-decoration:none;/g,"").replace(/-webkit-border-radius:[^;]+;/g,"")
+       .replace(/mso-line-height-rule:exactly;/g,"").replace(/letter-spacing:0px;/g,"").replace(/mso-table-lspace:0pt;mso-table-rspace:0pt;/g,"")
+       .replace(/border-spacing:0;/g,"").replace(/<font color="#[0-9a-fA-F]{6}">/g,"").replace(/<\/font>/g,"")
+       .replace(/'Neue Haas Grotesk Display Pro','Neue Haas Display','Helvetica Neue',Helvetica,Arial,sans-serif/g,"'Neue Haas Grotesk Display Pro',Arial,sans-serif")
+       .replace(/ class="lk-txt"/g,"").replace(/ class="lk-tile"/g,"").replace(/letter-spacing:0\.\d+px;/g,"")
+       .replace(/(<table[^>]*?) border="0"/g,"$1").replace(/width="(\d+)"([^>]*?)style="width:\1px;/g,'width="$1"$2style="')
+       .replace(/ alt="LEKO — lekolabs.com" title="Découvrir LEKO"/g,' alt="LEKO"').replace(/ style="display:block;text-decoration:none;border:0;"/g,"")
+       .replace(/padding:0;line-height:0;font-size:0;/g,"padding:0;")
+       .replace(/ style="border-collapse:collapse;"/g,"").replace(/(<img[^>]*?style=")display:block;width:\d+px;height:\d+px;/g,"$1display:block;").replace(/ style=""/g,"")
+       .replace(/\n/g,"");
+  const tok=(val,token)=>{ if(val) h=h.split(val).join(token); };
+  tok(esc(state.name),"%%DisplayName%%"); tok(esc(state.title1),"%%Title%%"); tok(esc(state.title2),"%%Notes%%");
+  tok("mailto:"+esc(state.email.trim()),"mailto:%%WindowsEmailAddress%%"); tok(esc(state.email.trim()),"%%WindowsEmailAddress%%");
+  tok("tel:"+esc(state.phone.replace(/[^\d+]/g,"")),"tel:%%MobilePhone%%"); tok(esc(state.phone),"%%MobilePhone%%");
+  h += '<span style="font-size:1px;line-height:1px;color:#ffffff;">'+M365_MARK+'</span>';
+  return h;
+}
+function updateM365Count(){ const el=$("#m365-count"); if(!el) return; const n=buildM365().length; el.textContent=n.toLocaleString("fr-FR")+" / 5 000 caractères"+(n>5000?" — trop long : décochez la version mobile ou le thème automatique":""); el.style.color = n>5000 ? "var(--bad-ink)" : "var(--ok-ink)"; }
 function fullDocument(inner){
   return '<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<meta name="color-scheme" content="light dark">\n<meta name="supported-color-schemes" content="light dark">\n<meta name="x-apple-disable-message-reformatting">\n<!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->\n<title>Signature LEKO</title>\n</head>\n<body style="margin:0;padding:0;">\n'+inner+'\n</body>\n</html>\n';
 }
@@ -529,6 +555,7 @@ function render(){
   $("#font-note").innerHTML = state.webfont ? '<div class="note ok">Le code contient les déclarations <code>@font-face</code> (masquées à Outlook Windows, qui reçoit Arial pour éviter son repli en Times New Roman). Vérifiez que la licence Commercial Type de LEKO couvre l\'usage webfont.</div>' : "";
   $("#theme-note").innerHTML = state.theme==="auto" ? '<div class="note ok">Le code contient un bloc <code>&lt;style&gt;</code> : conservé par Apple Mail et Outlook lorsqu\'on installe le fichier <code>.htm</code> ou qu\'on colle la signature ; Gmail le supprime et affiche la version claire.</div>' : "";
   checkAssets();
+  updateM365Count();
   saveState();
 }
 
@@ -652,6 +679,7 @@ $("#btn-link").addEventListener("click", async ()=>{
     : '<div class="note ok">Lien copié : il ouvre ce générateur avec les champs déjà renseignés. Le collègue n\'a plus qu\'à cliquer « Copier la signature ».</div>';
 });
 $("#btn-copy").addEventListener("click", copyRich);
+$("#btn-m365").addEventListener("click", async ()=>{ const h=buildM365(); try{ await navigator.clipboard.writeText(h); setStatus("Code pour règle de flux copié ("+h.length+" caractères)."); }catch(e){ prompt("Copiez ce code :", h); } });
 $("#btn-copy-html").addEventListener("click", async ()=>{ try{ await navigator.clipboard.writeText($("#code").value); setStatus("Code HTML copié."); }catch(e){ $("#code").select(); document.execCommand("copy"); setStatus("Code HTML copié."); } });
 $("#btn-dl-html").addEventListener("click", ()=>{ download("signature-LEKO-"+(slug(state.name)||"leko")+".htm", new Blob([$("#code").value],{type:"text/html;charset=utf-8"})); });
 
