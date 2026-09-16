@@ -1,49 +1,19 @@
 <!--
   LEKO — Signature mail 2026 V6 (plan de travail 01) — 500 x 150 px (source Illustrator x2 : 1000 x 300)
-  Template HTML avec variables {{...}} — voir README.md
-  Variables texte   : NAME, TITLE1, TITLE2, EMAIL, PHONE, PHONE_TEL, URL, IMG
-  Variables thème   : TILE_BG_IMG (style background-image de la tuile complète, anti-filets mobiles), FONT_STYLE (bloc @font-face optionnel, voir README), STYLE (bloc <style> du mode automatique ou vide), TILE_BG (#000000 | #ffffff), TXT (#ffffff | #000000),
-                      TOP_IMG / BOTTOM_IMG (balises <img> des tranches de la tuile, noire ou blanche, ou paire clair/sombre)
-  Variables dimensions : OUTER_W, INNER_W, PAD, TILE_W, GAP, VIS_W, VIS_H, MID_H, PAD_L, PAD_R, TEXT_W (500 x 150 : 500, 490, 5, 200, 5, 285, 140, 100, 19, 6, 175)
-  Variables tailles : LS_NAME, LS_TITLE, LS_CONTACT (interlettrage), FS_NAME, LH_NAME, PT_NAME, FS_TITLE, LH_TITLE, PT_TITLE, FS_CONTACT, LH_CONTACT, PT_EMAIL, PT_PHONE
-  Images            : tile-top-*@4x.png (800x32 -> 200x8), tile-bottom-*@4x.png (800x128 -> 200x32), visuel @3x (855x420 -> 285x140)
+  Squelette du template : la colonne de la tuile ({{TILE_COLUMN}}) est produite par generateur.html :
+    - clients modernes : une seule cellule noire, coins arrondis CSS (7,5 px = 15 px du fichier x2), logo en PNG x4 à l'intérieur ;
+    - Outlook Windows (bloc conditionnel mso) : tuile en trois rangées (tranche haute, cellule, tranche basse avec logo), seul moyen d'arrondir dans Word.
+  Un exemple complet généré est dans signature-exemple.html. Variables : voir README.md.
 -->
-{{FONT_STYLE}}{{STYLE}}<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="{{OUTER_W}}" style="width:{{OUTER_W}}px;border-collapse:collapse;border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+{{FONT_STYLE}}{{STYLE}}<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="{{OUTER_W}}" style="width:{{OUTER_W}}px;min-width:{{OUTER_W}}px;border-collapse:collapse;border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">
   <tr>
     <td valign="top" style="padding:{{PAD}}px;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="{{INNER_W}}" style="width:{{INNER_W}}px;border-collapse:collapse;border-spacing:0;">
         <tr>
-          <td class="lk-wrap" width="{{TILE_W}}" valign="top" style="width:{{TILE_W}}px;padding:0;{{TILE_BG_IMG}}">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="{{TILE_W}}" style="width:{{TILE_W}}px;border-collapse:collapse;border-spacing:0;">
-              <tr>
-                <td width="{{TILE_W}}" style="width:{{TILE_W}}px;padding:0;line-height:0;font-size:0;">{{TOP_IMG}}</td>
-              </tr>
-              <tr>
-                <td class="lk-tile" width="{{TILE_W}}" height="{{MID_H}}" bgcolor="{{TILE_BG}}" valign="top" style="width:{{TILE_W}}px;height:{{MID_H}}px;background-color:{{TILE_BG}};padding:0 {{PAD_R}}px 0 {{PAD_L}}px;">
-                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="{{TEXT_W}}" style="width:{{TEXT_W}}px;border-collapse:collapse;border-spacing:0;">
-                    <tr>
-                      <td class="lk-txt" style="padding:{{PT_NAME}}px 0 0 0;font-family:'Neue Haas Grotesk Display Pro','Neue Haas Display','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:{{FS_NAME}}px;line-height:{{LH_NAME}}px;mso-line-height-rule:exactly;font-weight:600;letter-spacing:{{LS_NAME}}px;color:{{TXT}};">{{NAME}}</td>
-                    </tr>
-                    <tr>
-                      <td class="lk-txt" style="padding:{{PT_TITLE}}px 0 0 0;font-family:'Neue Haas Grotesk Display Pro','Neue Haas Display','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:{{FS_TITLE}}px;line-height:{{LH_TITLE}}px;mso-line-height-rule:exactly;font-weight:400;letter-spacing:{{LS_TITLE}}px;color:{{TXT}};">{{TITLE1}}<br>{{TITLE2}}</td>
-                    </tr>
-                    <tr>
-                      <td class="lk-txt" style="padding:{{PT_EMAIL}}px 0 0 0;font-family:'Neue Haas Grotesk Display Pro','Neue Haas Display','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:{{FS_CONTACT}}px;line-height:{{LH_CONTACT}}px;mso-line-height-rule:exactly;font-weight:normal;letter-spacing:{{LS_CONTACT}}px;color:{{TXT}};"><a href="mailto:{{EMAIL}}" style="color:{{TXT}};text-decoration:underline;"><font color="{{TXT}}"><span class="lk-txt" style="color:{{TXT}};text-decoration:underline;">{{EMAIL}}</span></font></a></td>
-                    </tr>
-                    <tr>
-                      <td class="lk-txt" style="padding:{{PT_PHONE}}px 0 0 0;font-family:'Neue Haas Grotesk Display Pro','Neue Haas Display','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:{{FS_CONTACT}}px;line-height:{{LH_CONTACT}}px;mso-line-height-rule:exactly;font-weight:normal;letter-spacing:{{LS_CONTACT}}px;color:{{TXT}};"><a href="tel:{{PHONE_TEL}}" style="color:{{TXT}};text-decoration:none;"><font color="{{TXT}}"><span class="lk-txt" style="color:{{TXT}};text-decoration:none;">{{PHONE}}</span></font></a></td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr>
-                <td width="{{TILE_W}}" style="width:{{TILE_W}}px;padding:0;line-height:0;font-size:0;">{{BOTTOM_IMG}}</td>
-              </tr>
-            </table>
-          </td>
+          {{TILE_COLUMN}}
           <td width="{{GAP}}" style="width:{{GAP}}px;padding:0;font-size:1px;line-height:1px;mso-line-height-rule:exactly;">&nbsp;</td>
-          <td width="{{VIS_W}}" valign="top" style="width:{{VIS_W}}px;padding:0;line-height:0;font-size:0;">
-            <a href="{{URL}}" target="_blank" style="display:block;text-decoration:none;border:0;"><img src="{{IMG}}" width="{{VIS_W}}" height="{{VIS_H}}" alt="LEKO — lekolabs.com" title="Découvrir LEKO" border="0" style="display:block;width:{{VIS_W}}px;height:{{VIS_H}}px;border:0;outline:none;text-decoration:none;"></a>
+          <td width="{{VIS_W}}" valign="top" style="width:{{VIS_W}}px;min-width:{{VIS_W}}px;padding:0;line-height:0;font-size:0;">
+            <a href="{{URL}}" target="_blank" style="display:block;text-decoration:none;border:0;"><img src="{{IMG}}" width="{{VIS_W}}" height="{{VIS_H}}" alt="LEKO — lekolabs.com" title="Découvrir LEKO" border="0" style="display:block;width:{{VIS_W}}px;height:auto;max-width:100%;border:0;outline:none;text-decoration:none;"></a>
           </td>
         </tr>
       </table>

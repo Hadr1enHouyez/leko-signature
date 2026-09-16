@@ -10,15 +10,15 @@ Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iO
 | `generateur.html` | **Point d'entrée pour les collaborateurs.** Formulaire (nom, fonctions, e-mail, téléphone, lien), choix du thème, aperçu en temps réel, copie de la signature, export `.htm`, composition d'un visuel personnalisé. Fonctionne hors ligne, à ouvrir dans Chrome, Edge ou Safari. |
 | `signature-template.html` | Le template HTML brut avec variables `{{NAME}}`, `{{EMAIL}}`, `{{TILE_BG}}`, etc. Pour l'IT ou une intégration centralisée (Exchange, Exclaimer, CodeTwo…). |
 | `assets/` | Images **à héberger**, voir tableau ci-dessous. |
-| `exemple-apercu.html` | Aperçu local des thèmes clair et sombre (chemins relatifs). Ne pas coller dans un client mail. |
+| `signature-exemple.html` | Exemple complet du code généré (thème clair, champs neutres, images hébergées). |
 
 ### Assets
 
 | Fichier | Taille affichée | Résolution | Rôle |
 |---|---|---|---|
-| `tile-top-black@4x.png` / `tile-top-white@4x.png` | 200 × 8 | ×4 (800 × 32) | Angles arrondis supérieurs de la tuile, noire (thème clair) ou blanche (thème sombre) |
-| `tile-bottom-black@4x.png` / `tile-bottom-white@4x.png` | 200 × 32 | ×4 (800 × 128) | Angles inférieurs **et logo LEKO**, rendu depuis le vecteur en ×4 pour rester net sur tout écran, y compris à la loupe |
-| `tile-full-black@4x.png` / `tile-full-white@4x.png` | 200 × 140 | ×4 (800 × 560) | Tuile complète arrondie, posée en image de fond derrière les tranches et la cellule : sur mobile, où le mail est réduit à l'écran, les filets de sous-pixel entre images et cellule laissent voir du noir et non le fond du mail |
+| `tile-top-black@4x.png` / `tile-top-white@4x.png` | 200 × 8 | ×4 (800 × 32) | Angles supérieurs de la tuile, **Outlook Windows uniquement** (bloc conditionnel), noire (thème clair) ou blanche (thème sombre) |
+| `tile-bottom-black@4x.png` / `tile-bottom-white@4x.png` | 200 × 32 | ×4 (800 × 128) | Angles inférieurs et logo, **Outlook Windows uniquement** |
+| `logo-white@4x.png` / `logo-black@4x.png` | 38 × 10 | ×4 (152 × 40) | Logo LEKO seul, rendu depuis le vecteur, posé dans la tuile à coins arrondis CSS (clients modernes) |
 | `visual-robotics@3x.png` | 285 × 140 | ×3 (855 × 420) | Visuel par défaut, rééchantillonné en Lanczos depuis la photo source 6000 px, angles transparents, CTA et ombre portée inclus (580 Ko) |
 | `visual-robotics@3x.jpg` | 285 × 140 | ×3 | Même visuel, angles blancs, 84 Ko — pour les collages sans hébergement |
 | `cta-shadow@3x.png` | — | ×3 (141 × 141) | Pastille Revolt Green + flèche + ombre portée, extraite du fichier source ; utilisée par le générateur pour composer un visuel personnalisé |
@@ -28,8 +28,10 @@ Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iO
 ## Comment la signature est construite
 
 - **Tableaux HTML imbriqués et styles inline** uniquement : seule structure rendue à l'identique par le moteur Word d'Outlook Windows.
-- **Angles arrondis (15 px dans le fichier ×2)** : `border-radius` n'existe pas dans Outlook Windows. Les angles sont donc **cuits dans les images**. La tuile est découpée en trois rangées : image haute (angles), cellule `bgcolor` avec le texte réel, image basse (angles + logo). Le visuel est un PNG à angles transparents, CTA et ombre inclus. Résultat identique partout, y compris sur fond sombre. Une image de fond de la tuile complète (`tile-full-*`) est en plus posée derrière l'ensemble pour absorber les filets de sous-pixel que produisent iOS Mail et Outlook mobile quand ils réduisent le mail à la largeur de l'écran ; Outlook Windows, qui ignore les images de fond, garde les tranches.
-- **Liens** : la couleur et l'absence de soulignement du téléphone (et le soulignement de l'e-mail) sont répétés sur une balise imbriquée dans le lien, car Outlook Windows applique son style « Lien hypertexte » à la balise elle-même et ignore ce qu'elle porte.
+- **Tuile noire** : une seule cellule à fond noir et coins arrondis CSS (7,5 px à l'écran = 15 px du fichier ×2, comme les angles du visuel), avec le logo LEKO en PNG ×4 à l'intérieur. Aucune jonction d'images : c'est ce qui supprime les filets clairs que produisaient les tranches sur iOS Mail, Outlook mobile et Gmail mobile quand le mail est réduit à l'écran. Apple Mail, iOS, Gmail, Outlook Mac, Outlook mobile, Outlook.com et le nouveau Outlook arrondissent tous les coins en CSS.
+- **Outlook classique Windows** ignore les coins arrondis CSS. Le code contient un bloc conditionnel réservé à Word (`<!--[if mso]>`) avec la tuile en trois rangées : tranche haute, cellule noire, tranche basse avec logo, angles cuits dans les images. Ce bloc n'est lu que si la signature est installée par le fichier `.htm` (dossier `Signatures`) ; une signature **collée** dans Outlook Windows perd les commentaires conditionnels et affiche la tuile à coins carrés.
+- **Visuel** : PNG à angles transparents, CTA et ombre inclus, une seule image cliquable.
+- **Gmail mobile** : l'application comprime les colonnes pour tenir dans l'écran. Des largeurs minimales sur le tableau et les cellules l'obligent à réduire l'ensemble à l'échelle plutôt qu'à écraser le visuel ; en dernier recours la hauteur du visuel est laissée automatique pour qu'il ne se déforme jamais.
 - **Netteté** : les tranches (dont le logo) sont fournies en ×4, le visuel en ×3, tous affichés via les attributs `width`/`height` à la taille ×1. Un écran Retina (×2) ou une loupe ×2 dans le générateur restent nets.
 - **Texte réel, éditable et cliquable** : nom, fonctions, e-mail (`mailto:`), téléphone (`tel:`). Police : Neue Haas Grotesk Display Pro si installée chez le destinataire, sinon Helvetica Neue / Helvetica / Arial. Tailles : nom 15 px, fonctions 7,5 px, contacts 10 px (préréglage « Lisible » : 16 / 8,5 / 11). Graisses : nom en Medium, fonctions et contacts en Roman. Le bloc nom + fonction est posé à 19 px du haut de la tuile, comme de la gauche.
 - **Liens** : le visuel et la flèche Revolt Green forment une seule image cliquable vers l'URL choisie, modifiable dans le générateur.
