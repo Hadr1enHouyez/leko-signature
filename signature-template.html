@@ -3,9 +3,10 @@
   Squelette du template : la colonne de la tuile ({{TILE_COLUMN}}) est produite par generateur.html :
     - clients modernes : une seule cellule noire, coins arrondis CSS (7,5 px = 15 px du fichier x2), logo en PNG x4 à l'intérieur ;
     - Outlook Windows (bloc conditionnel mso) : tuile en trois rangées (tranche haute, cellule, tranche basse avec logo), seul moyen d'arrondir dans Word.
+  {{MOBILE_BLOCK}} : version mobile (plan de travail 02) masquée par défaut, révélée par la media query {{RESP_STYLE}} sous 540 px de largeur.
   Un exemple complet généré est dans signature-exemple.html. Variables : voir README.md.
 -->
-{{FONT_STYLE}}{{STYLE}}<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="{{OUTER_W}}" style="width:{{OUTER_W}}px;min-width:{{OUTER_W}}px;border-collapse:collapse;border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+{{FONT_STYLE}}{{STYLE}}{{RESP_STYLE}}<table class="lk-desk" role="presentation" cellpadding="0" cellspacing="0" border="0" width="{{OUTER_W}}" style="width:{{OUTER_W}}px;min-width:{{OUTER_W}}px;border-collapse:collapse;border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">
   <tr>
     <td valign="top" style="padding:{{PAD}}px;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="{{INNER_W}}" style="width:{{INNER_W}}px;border-collapse:collapse;border-spacing:0;">
@@ -13,10 +14,11 @@
           {{TILE_COLUMN}}
           <td width="{{GAP}}" style="width:{{GAP}}px;padding:0;font-size:1px;line-height:1px;mso-line-height-rule:exactly;">&nbsp;</td>
           <td width="{{VIS_W}}" valign="top" style="width:{{VIS_W}}px;min-width:{{VIS_W}}px;padding:0;line-height:0;font-size:0;">
-            <a href="{{URL}}" target="_blank" style="display:block;text-decoration:none;border:0;"><img src="{{IMG}}" width="{{VIS_W}}" height="{{VIS_H}}" alt="LEKO — lekolabs.com" title="Découvrir LEKO" border="0" style="display:block;width:{{VIS_W}}px;height:auto;max-width:100%;border:0;outline:none;text-decoration:none;"></a>
+            <a href="{{URL}}" target="_blank" style="display:block;text-decoration:none;border:0;"><img src="{{IMG}}" width="{{VIS_W}}" height="{{VIS_H}}" alt="LEKO — lekolabs.com" title="Découvrir LEKO" border="0" style="display:block;width:{{VIS_W}}px;height:{{VIS_H}}px;border:0;outline:none;text-decoration:none;"></a>
           </td>
         </tr>
       </table>
     </td>
   </tr>
 </table>
+{{MOBILE_BLOCK}}

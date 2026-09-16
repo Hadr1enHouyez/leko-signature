@@ -21,6 +21,7 @@ Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iO
 | `logo-white@4x.png` / `logo-black@4x.png` | 38 × 10 | ×4 (152 × 40) | Logo LEKO seul, rendu depuis le vecteur, posé dans la tuile à coins arrondis CSS (clients modernes) |
 | `visual-robotics@3x.png` | 285 × 140 | ×3 (855 × 420) | Visuel par défaut, rééchantillonné en Lanczos depuis la photo source 6000 px, angles transparents, CTA et ombre portée inclus (580 Ko) |
 | `visual-robotics@3x.jpg` | 285 × 140 | ×3 | Même visuel, angles blancs, 84 Ko — pour les collages sans hébergement |
+| `visual-robotics-mobile@3x.png` / `.jpg` | 224 × 140 | ×3 (672 × 420) | Visuel de la version mobile (plan de travail 02) : même photo, recadrage centré, CTA et ombre à la même place |
 | `cta-shadow@3x.png` | — | ×3 (141 × 141) | Pastille Revolt Green + flèche + ombre portée, extraite du fichier source ; utilisée par le générateur pour composer un visuel personnalisé |
 | `reference-artboard-01@2x.png` | — | ×2 | Rendu du plan de travail 01, pour contrôle |
 | `fonts/NeueHaasGroteskDisplayPro-65Medium.woff2` / `-55Roman.woff2` (+ `.woff`) | — | — | Webfonts, sous-ensemble latin (15 Ko chacune), pour l'option « Intégrer la police » |
@@ -31,7 +32,7 @@ Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iO
 - **Tuile noire** : une seule cellule à fond noir et coins arrondis CSS (7,5 px à l'écran = 15 px du fichier ×2, comme les angles du visuel), avec le logo LEKO en PNG ×4 à l'intérieur. Aucune jonction d'images : c'est ce qui supprime les filets clairs que produisaient les tranches sur iOS Mail, Outlook mobile et Gmail mobile quand le mail est réduit à l'écran. Apple Mail, iOS, Gmail, Outlook Mac, Outlook mobile, Outlook.com et le nouveau Outlook arrondissent tous les coins en CSS.
 - **Outlook classique Windows** ignore les coins arrondis CSS. Le code contient un bloc conditionnel réservé à Word (`<!--[if mso]>`) avec la tuile en trois rangées : tranche haute, cellule noire, tranche basse avec logo, angles cuits dans les images. Ce bloc n'est lu que si la signature est installée par le fichier `.htm` (dossier `Signatures`) ; une signature **collée** dans Outlook Windows perd les commentaires conditionnels et affiche la tuile à coins carrés.
 - **Visuel** : PNG à angles transparents, CTA et ombre inclus, une seule image cliquable.
-- **Gmail mobile** : l'application comprime les colonnes pour tenir dans l'écran. Des largeurs minimales sur le tableau et les cellules l'obligent à réduire l'ensemble à l'échelle plutôt qu'à écraser le visuel ; en dernier recours la hauteur du visuel est laissée automatique pour qu'il ne se déforme jamais.
+- **Gmail mobile** : l'application comprime les colonnes pour tenir dans l'écran. Des largeurs minimales sur le tableau et la colonne du visuel l'obligent à réduire l'ensemble à l'échelle plutôt qu'à écraser le visuel. Le visuel garde une hauteur fixe : un `max-width:100%` ou une hauteur automatique dans une cellule de tableau fait disparaître l'image dans Apple Mail (WebKit résout le pourcentage à zéro). Gmail n'affiche pas les webfonts et agrandit les très petits textes : c'est la version mobile qui règle ce point.
 - **Netteté** : les tranches (dont le logo) sont fournies en ×4, le visuel en ×3, tous affichés via les attributs `width`/`height` à la taille ×1. Un écran Retina (×2) ou une loupe ×2 dans le générateur restent nets.
 - **Texte réel, éditable et cliquable** : nom, fonctions, e-mail (`mailto:`), téléphone (`tel:`). Police : Neue Haas Grotesk Display Pro si installée chez le destinataire, sinon Helvetica Neue / Helvetica / Arial. Tailles : nom 15 px, fonctions 7,5 px, contacts 10 px (préréglage « Lisible » : 16 / 8,5 / 11). Graisses : nom en Medium, fonctions et contacts en Roman. Le bloc nom + fonction est posé à 19 px du haut de la tuile, comme de la gauche.
 - **Liens** : le visuel et la flèche Revolt Green forment une seule image cliquable vers l'URL choisie, modifiable dans le générateur.
@@ -71,6 +72,19 @@ Il n'existe donc aucun moyen de garantir la police dans tous les clients : c'est
 **Licence** : les fichiers proviennent de Commercial Type (EULA « Font Software »). La diffusion en webfont depuis un serveur LEKO relève d'une licence web distincte de la licence poste : à vérifier auprès de Commercial Type avant d'héberger `assets/fonts/`.
 
 **Hébergement des polices** : le serveur doit renvoyer l'en-tête `Access-Control-Allow-Origin: *` sur le dossier `fonts/` (les navigateurs et WebKit refusent les polices d'une autre origine sans cet en-tête) et le type MIME `font/woff2`.
+
+## Version mobile (plan de travail 02)
+
+L'étape 9 du générateur ajoute une seconde mise en page, empilée : tuile 224 × 133 (nom, fonctions, e-mail, téléphone avec le logo à sa droite) puis visuel 224 × 140, soit 234 × 288 px à la taille du fichier ×2. Le réglage recommandé est 150 % (352 × 432 px), qui remplit l'écran d'un téléphone sans le déborder ; 100 % et 125 % sont disponibles.
+
+Mécanisme : les deux versions sont dans le code. La version desktop porte la classe `lk-desk`, la version mobile est dans un bloc `lk-mob` masqué (`display:none`, `mso-hide:all`). Une media query `@media only screen and (max-width:540px)` inverse les deux quand la largeur de lecture est inférieure à 540 px.
+
+| Client du destinataire | Résultat |
+|---|---|
+| Apple Mail, iOS Mail, Gmail (compte Google), Outlook iOS/Android, Outlook Mac (volet étroit) | Version mobile sous 540 px, desktop au-dessus |
+| Outlook classique Windows, Outlook.com, Gmail avec compte non Google | Version desktop uniquement |
+
+La bascule dépend du bloc `<style>` : Apple Mail le conserve au collage, Outlook Windows le lit dans le fichier `.htm`. Si le client d'envoi le supprime (Outlook Mac peut le faire au collage), les destinataires voient la version desktop, jamais les deux. Pour un visuel personnalisé, le générateur produit désormais les deux recadrages (855 × 420 et 672 × 420) avec le suffixe `-mobile`.
 
 ## Taille d'affichage
 
