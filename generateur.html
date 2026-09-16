@@ -385,8 +385,12 @@ function textRows(v, p, d, ptName, logoImg){
 function tileColumn(theme, src, d, p, v){
   const tiles=tileImages(theme, src);
   // Clients modernes : une seule cellule, coins arrondis CSS, logo à l'intérieur
-  const std='<td class="lk-tile" width="'+d.tileW+'" height="'+d.visH+'" bgcolor="'+v.TILE_BG+'" valign="top" style="width:'+d.tileW+'px;min-width:'+d.tileW+'px;height:'+d.visH+'px;background-color:'+v.TILE_BG+';border-radius:'+d.radius+'px;-webkit-border-radius:'+d.radius+'px;padding:0 '+d.padR+'px 0 '+d.padL+'px;">'
-    + textRows(v,p,d,d.ptNameStd,tiles.logo) + '</td>';
+  // La colonne garde padding:0 et un tableau imbriqué de largeur fixe : la largeur d'une cellule avec padding
+  // est interprétée différemment selon les clients (contenu ou bordure), la largeur du tableau, elle, est respectée partout.
+  const std='<td width="'+d.tileW+'" valign="top" style="width:'+d.tileW+'px;padding:0;">'
+    + '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.tileW+'" style="width:'+d.tileW+'px;border-collapse:collapse;border-spacing:0;"><tr>'
+    + '<td class="lk-tile" width="'+d.tileW+'" height="'+d.visH+'" bgcolor="'+v.TILE_BG+'" valign="top" style="width:'+d.tileW+'px;height:'+d.visH+'px;background-color:'+v.TILE_BG+';border-radius:'+d.radius+'px;-webkit-border-radius:'+d.radius+'px;padding:0 '+d.padR+'px 0 '+d.padL+'px;">'
+    + textRows(v,p,d,d.ptNameStd,tiles.logo) + '</td></tr></table></td>';
   // Outlook Windows : tranches d'images (Word ignore border-radius)
   const cellTd=(inner)=>'<td width="'+d.tileW+'" style="width:'+d.tileW+'px;padding:0;line-height:0;font-size:0;">'+inner+'</td>';
   const mso='<td width="'+d.tileW+'" valign="top" style="width:'+d.tileW+'px;padding:0;">'
