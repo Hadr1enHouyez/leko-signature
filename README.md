@@ -11,6 +11,7 @@ Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iO
 | `assets/` | Images **à héberger**, voir tableau ci-dessous. |
 | `signature-exemple.html` | Exemple complet du code généré (thème clair, champs neutres, images hébergées). |
 | `deploiement-m365.md` | Procédure pas à pas pour déployer la signature par une règle de flux Microsoft 365 (côté serveur, tous les clients), avec jetons d'annuaire et exception anti-doublon. |
+| `deploiement-m365.ps1` | Script PowerShell : crée ou met à jour la règle de flux en une commande (mode test par défaut, `-Enforce` pour activer, `-Pilote` pour un groupe). |
 | `signature-m365.html` | Code prêt à coller dans la règle de flux : desktop + version mobile, jetons d'annuaire, 4 879 caractères (limite 5 000). Régénérable depuis le générateur avec d'autres réglages. |
 
 ### Assets

@@ -51,6 +51,8 @@ La règle est active en quelques minutes (jusqu'à une heure pour la propagation
 
 ### Variante PowerShell
 
+Le script `deploiement-m365.ps1` livré dans ce dossier fait tout en une commande : `.\deploiement-m365.ps1` crée la règle en mode test, `.\deploiement-m365.ps1 -Enforce` l'active, `-Pilote "groupe@lekolabs.com"` la limite à un groupe. Équivalent manuel :
+
 ```powershell
 Connect-ExchangeOnline
 $html = Get-Content -Raw -Encoding UTF8 .\signature-m365.html
