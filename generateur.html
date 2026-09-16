@@ -439,7 +439,7 @@ function render(){
   if(state.visualMode==="url" && !state.visualUrl.trim()) notes.push('<div class="note bad">Indiquez l\'URL du visuel (étape 4).</div>');
   $("#export-note").innerHTML = notes.join("");
   $("#font-note").innerHTML = state.webfont ? '<div class="note ok">Le code contient les déclarations <code>@font-face</code> (masquées à Outlook Windows, qui reçoit Arial pour éviter son repli en Times New Roman).</div>' : "";
-  $("#theme-note").innerHTML = state.theme==="auto" ? '<div class="note ok">Le code contient un bloc <code>&lt;style&gt;</code> : conservé par l\'installation par fichier, supprimé par la plupart des éditeurs au collage (la version claire s\'affiche alors).</div>' : "";
+  $("#theme-note").innerHTML = state.theme==="auto" ? '<div class="note warn">Le thème automatique repose sur un bloc <code>&lt;style&gt;</code> que les éditeurs de signature suppriment ou affichent en texte au collage. Le bouton « Copier la signature » copie donc la <strong>version claire</strong> ; le thème automatique n\'est présent que dans « Télécharger signature.htm » et « Copier le code HTML », pour une installation par fichier (Outlook Windows, Apple Mail) ou par outil serveur.</div>' : "";
   checkAssets(); updateM365Count(); saveState();
 }
 let checkTimer=null;
@@ -505,12 +505,15 @@ function dataUrlToBlob(d){const [h,b]=d.split(","); const mime=h.match(/:(.*?);/
 function download(name, blob){const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500);}
 function setStatus(msg, ok=true){const s=$("#status"); s.style.color=ok?"var(--ok-ink)":"var(--bad-ink)"; s.textContent=msg; clearTimeout(setStatus.t); setStatus.t=setTimeout(()=>s.textContent="",6000);}
 async function copyRich(){
-  const html=buildHtml(true);
+  // Au collage, les éditeurs de signature suppriment les blocs <style> ou en affichent le texte, et peuvent révéler
+  // le second logo masqué : on colle donc toujours une version statique. Le thème automatique reste dans les exports par fichier.
+  const isAuto = state.theme==="auto";
+  const html = buildHtml(true, isAuto ? "light" : null);
   const plain=[fullName(), state.title1, state.title2, state.email, state.phone, state.url].filter(Boolean).join("\n");
   try{
     if(navigator.clipboard && window.ClipboardItem){
       await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([plain],{type:"text/plain"})})]);
-      setStatus("Signature copiée. Collez-la dans l'éditeur de signature de votre client mail."); return; }
+      setStatus(isAuto ? "Signature copiée en version claire (le thème automatique ne survit pas au collage ; utilisez « Télécharger signature.htm » pour l'installer par fichier)." : "Signature copiée. Collez-la dans l'éditeur de signature de votre client mail."); return; }
     throw new Error("no clipboard api");
   }catch(err){
     const tmp=document.createElement("div"); tmp.innerHTML=html; tmp.style.position="fixed"; tmp.style.left="-9999px"; document.body.appendChild(tmp);

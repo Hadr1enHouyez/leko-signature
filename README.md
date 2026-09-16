@@ -41,7 +41,7 @@ Générateur en ligne : **https://hadr1enhouyez.github.io/leko-signature/generat
 |---|---|---|
 | **Clair** | Tuile noire, texte blanc | Version de référence, identique partout |
 | **Sombre** | Tuile blanche, texte noir | Statique, identique partout |
-| **Automatique** | Clair par défaut, bascule en sombre quand le client du destinataire applique le mode sombre | Uniquement si le code est installé par fichier : les éditeurs de signature suppriment le bloc `<style>` au collage et la version claire s'affiche alors |
+| **Automatique** | Clair par défaut, bascule en sombre quand le client du destinataire applique le mode sombre | Uniquement pour une installation par fichier (`.htm`, `.mailsignature`) ou par outil serveur. Au collage, les éditeurs suppriment le bloc `<style>` ou en affichent le texte : le bouton « Copier la signature » copie donc la version claire quand ce thème est choisi |
 
 Le logo suit le thème : blanc sur tuile noire, noir sur tuile blanche ; en thème automatique, la paire est permutée par le bloc de style.
 
