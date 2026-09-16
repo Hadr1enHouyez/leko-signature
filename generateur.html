@@ -35,7 +35,8 @@
   .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
   .preview-wrap{border:1px dashed var(--line);border-radius:12px;padding:28px;display:flex;justify-content:center;align-items:flex-start;overflow:auto;background:#fff;min-height:220px;background-image:linear-gradient(45deg,#f6f6f6 25%,transparent 25%),linear-gradient(-45deg,#f6f6f6 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#f6f6f6 75%),linear-gradient(-45deg,transparent 75%,#f6f6f6 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0}
   .preview-wrap.dark{background:#1f1f1f;background-image:none}
-  #preview{zoom:1}
+  #preview.phone{width:375px;outline:1px dashed #bbb;outline-offset:8px}
+  #preview{zoom:1;width:500px;flex:0 0 auto}
   .toolbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:12.5px;color:var(--muted);margin-bottom:10px}
   .toolbar label{display:inline-flex;align-items:center;gap:6px;margin:0;color:var(--muted)}
   textarea{width:100%;min-height:160px;font:11.5px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:8px;padding:10px;white-space:pre;color:#333;background:#fafaf8}
@@ -170,13 +171,14 @@
 
     <div class="card">
       <h2>9 · Version mobile (plan de travail 02)</h2>
-      <label style="display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-size:13px;cursor:pointer"><input type="checkbox" id="f-mobile" data-key="mobile" style="margin-top:3px"> <span><strong>Ajouter la version mobile</strong> — tuile et visuel empilés, logo à droite du téléphone. Elle remplace la version desktop quand la largeur de lecture est inférieure à 540 px (Apple Mail, iOS Mail, Gmail, Outlook mobile). Les clients qui ignorent les media queries gardent la version desktop.</span></label>
+      <div class="note ok" style="margin-top:0"><strong>Toujours actif : mise en page fluide.</strong> Les deux colonnes sont des blocs qui se placent côte à côte quand la largeur de lecture le permet et s'empilent en dessous de 490 px (tuile puis visuel, pleine largeur). Aucun bloc de style n'est nécessaire : cela survit au collage dans Outlook, Apple Mail et Gmail, et fonctionne sur tous les téléphones. Outlook Windows, qui ignore ces styles, garde les colonnes côte à côte.</div>
+      <label style="display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-size:13px;cursor:pointer;margin-top:10px"><input type="checkbox" id="f-mobile" data-key="mobile" style="margin-top:3px"> <span><strong>Ajouter en plus la mise en page du plan de travail 02</strong> — tuile 224 × 133 avec le logo à droite du téléphone, textes agrandis, visuel recadré. Elle remplace la version fluide sous 540 px, mais uniquement chez les destinataires dont le mail a conservé le bloc de style : signature installée par fichier <code>.htm</code> (Outlook Windows) ou par un outil de signature serveur. Au collage dans Outlook Mac ou Apple Mail, ce bloc est supprimé et c'est la version fluide qui s'affiche.</span></label>
       <div class="radio" id="mscale-box" style="margin-top:10px">
         <label><input type="radio" name="mscale" value="1" data-key="mscale"> <span><strong>100 %</strong> — 234 × 288 px (taille du fichier ×2)</span></label>
         <label><input type="radio" name="mscale" value="1.25" data-key="mscale"> <span><strong>125 %</strong> — 293 × 360 px</span></label>
         <label><input type="radio" name="mscale" value="1.5" data-key="mscale"> <span><strong>150 %</strong> — 352 × 432 px (recommandé : remplit l'écran d'un téléphone sans le déborder)</span></label>
       </div>
-      <div class="hint">La bascule repose sur un bloc <code>&lt;style&gt;</code> dans le code. Il est conservé par Apple Mail et par l'installation <code>.htm</code> d'Outlook Windows ; si le client d'envoi le supprime (cas possible avec Outlook Mac), les destinataires voient la version desktop, jamais les deux.</div>
+      <div class="hint">Dans tous les cas, aucun destinataire ne voit deux versions : la mise en page du plan 02 reste masquée tant que le bloc de style n'est pas lu.</div>
     </div>
 
     <div class="actions">
@@ -191,7 +193,7 @@
         <label title="Aperçu uniquement : n'agrandit pas la signature exportée"><input type="checkbox" id="zoom2"> Loupe ×2 (aperçu seulement)</label>
         <label><input type="checkbox" id="darkbg"> Fond sombre</label>
         <label id="simdark-label"><input type="checkbox" id="simdark"> Simuler le mode sombre du destinataire</label>
-        <label id="pvmobile-label"><input type="checkbox" id="pvmobile"> Aperçu de la version mobile</label>
+        <label>Aperçu : <select id="pvmode" style="font:inherit;font-size:12.5px;padding:2px 4px;border:1px solid var(--line);border-radius:6px"><option value="desktop">Desktop (500 px)</option><option value="phone">Téléphone 375 px — mise en page fluide</option><option value="plan02">Téléphone 375 px — plan 02 (si le style est conservé)</option></select></label>
         <span id="fontinfo"></span>
       </div>
       <div class="preview-wrap" id="preview-wrap"><div id="preview"></div></div>
@@ -269,31 +271,6 @@
   </section>
 </main>
 
-<script type="text/x-template" id="sig-template"><!--
-  LEKO — Signature mail 2026 V6 (plan de travail 01) — 500 x 150 px (source Illustrator x2 : 1000 x 300)
-  Squelette du template : la colonne de la tuile ({{TILE_COLUMN}}) est produite par generateur.html :
-    - clients modernes : une seule cellule noire, coins arrondis CSS (7,5 px = 15 px du fichier x2), logo en PNG x4 à l'intérieur ;
-    - Outlook Windows (bloc conditionnel mso) : tuile en trois rangées (tranche haute, cellule, tranche basse avec logo), seul moyen d'arrondir dans Word.
-  {{MOBILE_BLOCK}} : version mobile (plan de travail 02) masquée par défaut, révélée par la media query {{RESP_STYLE}} sous 540 px de largeur.
-  Un exemple complet généré est dans signature-exemple.html. Variables : voir README.md.
--->
-{{FONT_STYLE}}{{STYLE}}{{RESP_STYLE}}<table class="lk-desk" role="presentation" cellpadding="0" cellspacing="0" border="0" width="{{OUTER_W}}" style="width:{{OUTER_W}}px;min-width:{{OUTER_W}}px;border-collapse:collapse;border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">
-  <tr>
-    <td valign="top" style="padding:{{PAD}}px;">
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="{{INNER_W}}" style="width:{{INNER_W}}px;border-collapse:collapse;border-spacing:0;">
-        <tr>
-          {{TILE_COLUMN}}
-          <td width="{{GAP}}" style="width:{{GAP}}px;padding:0;font-size:1px;line-height:1px;mso-line-height-rule:exactly;">&nbsp;</td>
-          <td width="{{VIS_W}}" valign="top" style="width:{{VIS_W}}px;min-width:{{VIS_W}}px;padding:0;line-height:0;font-size:0;">
-            <a href="{{URL}}" target="_blank" style="display:block;text-decoration:none;border:0;"><img src="{{IMG}}" width="{{VIS_W}}" height="{{VIS_H}}" alt="LEKO — lekolabs.com" title="Découvrir LEKO" border="0" style="display:block;width:{{VIS_W}}px;height:{{VIS_H}}px;border:0;outline:none;text-decoration:none;"></a>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-{{MOBILE_BLOCK}}
-</script>
 <script>
 const EMBED = {
   topBlack: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAAAgCAYAAADqmBz1AAACmklEQVR42u3dz6vlcxzH8ec9NzXTyDQ/mklS05C4yjTyKySKYmJjMaUmbKbGhvwHsrFmQ1n48Q9QE0pzw5I0pBQKG00WhrJAarD4Hplud3SOe84ZM/fxqG+dTt/Oqdd39er9+Xw/Sy3GzupgdWu1Ul1R7at2V5cGAAAsyunqh+rb6lT1WfVR9Wn167z/fGmOv31Ndbi6v7p9zv8FAABszG/VavVW9Ub1/YVQQLZUR6onqhs9QwAAuCCdqd6rXqiO/x8LyLbqqfG1x/MCAICLxpfVc9Xr1Z/nu4AsVceqZxv2cwAAABenT6qnqw/OVwFZqV6s7vIsAABg03htXER+WmQBOVo9X22VPwAAbDrfVY827BOZyvKU919SvVQ9M/4MAABsPpdVj1Q/Vx/Oq4Bsr96uHpY3AABsesvVA9Xe6p0m3KA+aQHZ0TBeuU3OAADAWW6urq7enKSELE84+VhtOMkcAABgrRuq/Q0HGG6ogGytToxbDQAAwLkcaDiYfHUjBeTl6kFZAgAAE7izOlWd7D+8hvfx6hUZAgAAU/i9uqP6eJoCsr/6vGGEAgAAMI2vGvaQ/9KES7COj0sIAADAtHY1DDPebYIJyGPVqzIDAAA24I+Gl1md/LcCsq36uuEwEQAAgI04Ud139hejNTccUz4AAIAZuXd8td4EZEv1TXW5nAAAgBl5v7qndSYgR5QPAABgxu6url+vgByVDQAAMAdPtmYJ1krDuR8AAACz9mO1pzrz9wTksEwAAIA52Vkdqn+WYD0kEwAAYI4O1bAEa0d1+hyHEgIAAMzCF9V1o+oW5QMAAJiza6u9o+omWQAAAAuwMho3EQAAgHk7OKqukgMAALAA+0bVlXIAAAAWYNeo4S1YAAAA87b9L2n4R+xWAgtiAAAAAElFTkSuQmCC",
@@ -436,7 +413,7 @@ function mobileBlock(theme, src, v){
   if(!state.mobile) return "";
   return '<!--[if !mso]><!--><div class="lk-mob" style="display:none;max-height:0;overflow:hidden;mso-hide:all;">'+mobileTable(theme, src, v)+'</div><!--<![endif]-->';
 }
-function textRows(v, p, d, ptName, logoImg){
+function textRows(v, p, d, ptName, logoImg, fluid){
   const cell=(pt,fs,lh,fw,ls,inner)=>'<tr><td class="lk-txt" style="padding:'+pt+'px 0 0 0;font-family:'+FONT_STACK+';font-size:'+fs+'px;line-height:'+lh+'px;mso-line-height-rule:exactly;font-weight:'+fw+';letter-spacing:'+ls+'px;color:'+v.TXT+';">'+inner+'</td></tr>';
   const link=(href,txt,deco)=>'<a href="'+href+'" style="color:'+v.TXT+';text-decoration:'+deco+';"><font color="'+v.TXT+'"><span class="lk-txt" style="color:'+v.TXT+';text-decoration:'+deco+';">'+txt+'</span></font></a>';
   let rows = cell(ptName,p.FS_NAME,p.LH_NAME,600,p.LS_NAME,v.NAME)
@@ -444,30 +421,41 @@ function textRows(v, p, d, ptName, logoImg){
            + cell(p.PT_EMAIL,p.FS_CONTACT,p.LH_CONTACT,'normal',p.LS_CONTACT,link('mailto:'+v.EMAIL,v.EMAIL,'underline'))
            + cell(p.PT_PHONE,p.FS_CONTACT,p.LH_CONTACT,'normal',p.LS_CONTACT,link('tel:'+v.PHONE_TEL,v.PHONE,'none'));
   if(logoImg) rows += '<tr><td style="padding:'+d.ptLogo+'px 0 0 0;line-height:0;font-size:0;">'+logoImg+'</td></tr>';
-  return '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.textW+'" style="width:'+d.textW+'px;border-collapse:collapse;border-spacing:0;">'+rows+'</table>';
+  return fluid
+    ? '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;border-spacing:0;">'+rows+'</table>'
+    : '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.textW+'" style="width:'+d.textW+'px;border-collapse:collapse;border-spacing:0;">'+rows+'</table>';
 }
 function tileColumn(theme, src, d, p, v){
   const tiles=tileImages(theme, src);
-  // Clients modernes : une seule cellule, coins arrondis CSS, logo à l'intérieur
-  // La colonne garde padding:0 et un tableau imbriqué de largeur fixe : la largeur d'une cellule avec padding
-  // est interprétée différemment selon les clients (contenu ou bordure), la largeur du tableau, elle, est respectée partout.
-  const std='<td width="'+d.tileW+'" valign="top" style="width:'+d.tileW+'px;padding:0;">'
-    + '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.tileW+'" style="width:'+d.tileW+'px;border-collapse:collapse;border-spacing:0;"><tr>'
-    + '<td class="lk-tile" width="'+d.tileW+'" height="'+d.visH+'" bgcolor="'+v.TILE_BG+'" valign="top" style="width:'+d.tileW+'px;height:'+d.visH+'px;background-color:'+v.TILE_BG+';border-radius:'+d.radius+'px;-webkit-border-radius:'+d.radius+'px;padding:0 '+d.padR+'px 0 '+d.padL+'px;">'
-    + textRows(v,p,d,d.ptNameStd,tiles.logo) + '</td></tr></table></td>';
+  // Clients modernes : le tableau des colonnes est rendu en blocs (display:block sur table/tbody/tr, inline-block sur les cellules),
+  // largeur 100 % plafonnée : côte à côte quand la place le permet, empilé sinon. width:calc(100%) et display sont ignorés par Word,
+  // qui s'appuie sur les attributs width et garde un vrai tableau à colonnes.
+  const stdTile='<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.tileW+'" style="width:100%;border-collapse:collapse;border-spacing:0;"><tr>'
+    + '<td class="lk-tile" width="'+d.tileW+'" height="'+d.visH+'" bgcolor="'+v.TILE_BG+'" valign="top" style="height:'+d.visH+'px;background-color:'+v.TILE_BG+';border-radius:'+d.radius+'px;-webkit-border-radius:'+d.radius+'px;padding:0 '+d.padR+'px 0 '+d.padL+'px;">'
+    + textRows(v,p,d,d.ptNameStd,tiles.logo,true) + '</td></tr></table>';
+  // Largeur : calc((innerW - 100%) * 1000) vaut <= 0 quand la place suffit (plafonné par min-width = largeur desktop)
+  // et devient énorme sinon (plafonné par max-width:100 % = pleine largeur, donc empilement).
+  const std='<td width="'+d.tileW+'" valign="top" style="display:inline-block;vertical-align:top;width:calc(('+d.innerW+'px - 100%) * 1000);min-width:'+d.tileW+'px;max-width:100%;padding:0;">'+stdTile+'</td>';
   // Outlook Windows : tranches d'images (Word ignore border-radius)
   const cellTd=(inner)=>'<td width="'+d.tileW+'" style="width:'+d.tileW+'px;padding:0;line-height:0;font-size:0;">'+inner+'</td>';
   const mso='<td width="'+d.tileW+'" valign="top" style="width:'+d.tileW+'px;padding:0;">'
     + '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.tileW+'" style="width:'+d.tileW+'px;border-collapse:collapse;border-spacing:0;">'
     + '<tr>'+cellTd(tiles.top)+'</tr>'
-    + '<tr><td class="lk-tile" width="'+d.tileW+'" height="'+d.midH+'" bgcolor="'+v.TILE_BG+'" valign="top" style="width:'+d.tileW+'px;height:'+d.midH+'px;background-color:'+v.TILE_BG+';padding:0 '+d.padR+'px 0 '+d.padL+'px;">'+textRows(v,p,d,p.PT_NAME,null)+'</td></tr>'
+    + '<tr><td class="lk-tile" width="'+d.tileW+'" height="'+d.midH+'" bgcolor="'+v.TILE_BG+'" valign="top" style="width:'+d.tileW+'px;height:'+d.midH+'px;background-color:'+v.TILE_BG+';padding:0 '+d.padR+'px 0 '+d.padL+'px;">'+textRows(v,p,d,p.PT_NAME,null,false)+'</td></tr>'
     + '<tr>'+cellTd(tiles.bottom)+'</tr>'
     + '</table></td>';
   return '<!--[if mso]>'+mso+'<![endif]--><!--[if !mso]><!-->'+std+'<!--<![endif]-->';
 }
-const AUTO_STYLE_TPL = '<style type="text/css">\n@media (prefers-color-scheme: dark){\n  .lk-tile{background-color:#ffffff !important;}\n  .lk-txt,.lk-txt a{color:#000000 !important;}\n  .lk-l{display:none !important;}\n  .lk-d{display:block !important;max-height:none !important;overflow:visible !important;}\n}\n[data-ogsb] .lk-tile,[data-ogsc] .lk-tile{background-color:#ffffff !important;}\n[data-ogsc] .lk-txt,[data-ogsc] .lk-txt a{color:#000000 !important;}\n[data-ogsc] .lk-l{display:none !important;}\n[data-ogsc] .lk-d{display:block !important;max-height:none !important;overflow:visible !important;}\n</style>\n';
-
-
+function desktopBlock(theme, src, d, p, v){
+  const spacer='<td width="'+d.gap+'" style="display:inline-block;vertical-align:top;width:'+d.gap+'px;height:'+d.gap+'px;padding:0;font-size:0;line-height:0;mso-line-height-rule:exactly;"></td>';
+  const visual='<td width="'+d.visW+'" valign="top" style="display:inline-block;vertical-align:top;width:calc(('+d.innerW+'px - 100%) * 1000);min-width:'+d.visW+'px;max-width:100%;padding:0;line-height:0;font-size:0;">'
+    + '<a href="'+v.URL+'" target="_blank" style="display:block;text-decoration:none;border:0;"><img src="'+v.IMG+'" width="'+d.visW+'" height="'+d.visH+'" alt="LEKO — lekolabs.com" title="Découvrir LEKO" border="0" style="display:block;width:100%;height:auto;border:0;outline:none;text-decoration:none;"></a></td>';
+  return '<table class="lk-desk" role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.outerW+'" style="width:100%;max-width:'+d.outerW+'px;border-collapse:collapse;border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">'
+    + '<tr><td valign="top" style="padding:'+d.pad+'px;">'
+    + '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.innerW+'" style="display:block;width:100%;max-width:'+d.innerW+'px;border-collapse:collapse;border-spacing:0;">'
+    + '<tbody style="display:block;"><tr style="display:block;font-size:0;line-height:0;">'+tileColumn(theme, src, d, p, v)+spacer+visual+'</tr></tbody>'
+    + '</table></td></tr></table>';
+}
 function fontStyle(){
   if(!state.webfont) return "";
   const base=assetsBase();
@@ -480,27 +468,17 @@ function buildHtml(forExport, themeOverride){
   const d = dims();
   const p = scaledPreset(PRESETS[state.preset] || PRESETS.faithful, d.s);
   const theme = themeOverride || state.theme || "light";
-  let tpl = $("#sig-template").textContent.replace(/^\s*<!--[\s\S]*?-->\s*/,"");
-  const vars = Object.assign({}, p, {
+  const v = {
     NAME: esc(state.name), TITLE1: esc(state.title1), TITLE2: esc(state.title2),
     EMAIL: esc(state.email.trim()), PHONE: esc(state.phone),
     PHONE_TEL: esc(state.phone.replace(/[^\d+]/g,"")),
     URL: escAttr(state.url.trim() || "https://www.lekolabs.com"),
     IMG: escAttr(src.visual),
-    STYLE: theme==="auto" ? AUTO_STYLE_TPL : "",
-    FONT_STYLE: fontStyle(),
     TILE_BG: theme==="dark" ? "#ffffff" : "#000000",
-    TXT: theme==="dark" ? "#000000" : "#ffffff",
-    OUTER_W:d.outerW, INNER_W:d.innerW, PAD:d.pad, TILE_W:d.tileW, GAP:d.gap, VIS_W:d.visW, VIS_H:d.visH, MID_H:d.midH, PAD_L:d.padL, PAD_R:d.padR, TEXT_W:d.textW
-  });
-  vars.TILE_COLUMN = tileColumn(theme, src, d, p, vars);
-  vars.RESP_STYLE = state.mobile ? RESP_STYLE : "";
-  vars.MOBILE_BLOCK = mobileBlock(theme, src, vars);
-  Object.assign(vars, {
-    OUTER_W:d.outerW, INNER_W:d.innerW, PAD:d.pad, TILE_W:d.tileW, GAP:d.gap, VIS_W:d.visW, VIS_H:d.visH, MID_H:d.midH, PAD_L:d.padL, PAD_R:d.padR, TEXT_W:d.textW
-  });
-  tpl = tpl.replace(/\{\{(\w+)\}\}/g, (m,k)=> (k in vars) ? vars[k] : m);
-  return tpl.trim();
+    TXT: theme==="dark" ? "#000000" : "#ffffff"
+  };
+  const style = fontStyle() + (theme==="auto" ? AUTO_STYLE_TPL : "") + (state.mobile ? RESP_STYLE : "");
+  return (style + desktopBlock(theme, src, d, p, v) + "\n" + mobileBlock(theme, src, v)).trim();
 }
 function fullDocument(inner){
   return '<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<meta name="color-scheme" content="light dark">\n<meta name="supported-color-schemes" content="light dark">\n<meta name="x-apple-disable-message-reformatting">\n<!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->\n<title>Signature LEKO</title>\n</head>\n<body style="margin:0;padding:0;">\n'+inner+'\n</body>\n</html>\n';
@@ -511,10 +489,11 @@ function render(){
   $("#url-box").hidden = state.visualMode!=="url";
   $("#simdark-label").style.display = state.theme==="auto" ? "" : "none";
   const sim = state.theme==="auto" && $("#simdark").checked;
-  $("#pvmobile-label").style.display = state.mobile ? "" : "none";
   $("#mscale-box").style.display = state.mobile ? "" : "none";
+  const opt02=$("#pvmode option[value=plan02]"); opt02.disabled=!state.mobile; if(!state.mobile && $("#pvmode").value==="plan02") $("#pvmode").value="phone";
   const pvTheme = sim ? "dark" : (state.theme==="auto" ? "light" : null);
-  const pvMobile = state.mobile && $("#pvmobile").checked;
+  const pvmode=$("#pvmode").value; const pvMobile = pvmode==="plan02";
+  $("#preview").classList.toggle("phone", pvmode!=="desktop");
   if(pvMobile){
     const src=imageSources(false), theme=pvTheme||state.theme||"light";
     const v={NAME:esc(state.name),TITLE1:esc(state.title1),TITLE2:esc(state.title2),EMAIL:esc(state.email.trim()),PHONE:esc(state.phone),PHONE_TEL:esc(state.phone.replace(/[^\d+]/g,"")),URL:escAttr(state.url.trim()||"https://www.lekolabs.com"),TILE_BG:theme==="dark"?"#ffffff":"#000000",TXT:theme==="dark"?"#000000":"#ffffff"};
@@ -522,12 +501,12 @@ function render(){
   } else {
     $("#preview").innerHTML = buildHtml(false, pvTheme);
   }
-  const dd=dims(), md=mdims(); $("#dims-label").textContent = pvMobile ? (md.outerW+" × "+md.outerH+" — mobile") : (dd.outerW+" × "+dd.outerH + (state.mobile ? " — desktop ; mobile "+md.outerW+" × "+md.outerH : ""));
+  const dd=dims(), md=mdims(); $("#dims-label").textContent = pvMobile ? (md.outerW+" × "+md.outerH+" — plan 02") : (pvmode==="phone" ? "375 px — fluide" : dd.outerW+" × "+dd.outerH);
   $("#code").value = fullDocument(buildHtml(true));
   requestAnimationFrame(()=>{
     const inner = $("#preview .lk-tile table");
     const note = $("#height-note");
-    if(inner && !pvMobile){
+    if(inner && pvmode==="desktop"){
       const d=dims(); const h = inner.getBoundingClientRect().height / ($("#zoom2").checked?2:1);
       note.innerHTML = h>d.visH ? '<div class="note warn">Le bloc texte mesure '+Math.round(h)+' px pour '+d.visH+' px disponibles : raccourcissez les fonctions ou choisissez le préréglage « Fidèle ».</div>' : "";
     }
@@ -579,7 +558,7 @@ document.querySelectorAll("[data-key]").forEach(el=>{
 });
 $("#zoom2").addEventListener("change", e=>{ $("#preview").style.zoom = e.target.checked?2:1; render(); });
 $("#darkbg").addEventListener("change", e=>{ $("#preview-wrap").classList.toggle("dark", e.target.checked); });
-$("#pvmobile").addEventListener("change", ()=>render());
+$("#pvmode").addEventListener("change", ()=>render());
 $("#simdark").addEventListener("change", e=>{ if(e.target.checked){ $("#darkbg").checked=true; $("#preview-wrap").classList.add("dark"); } render(); });
 $("#btn-reset").addEventListener("click", ()=>{ state=Object.assign({},DEFAULTS); customVisualDataUrl=null; customVisualMobileDataUrl=null; customPhoto=null; $("#btn-dl-visual").disabled=true; $("#btn-dl-visual-m").disabled=true; syncForm(); render(); });
 
