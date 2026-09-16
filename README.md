@@ -31,9 +31,9 @@ Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iO
 - **Tuile noire** : une seule cellule à fond noir et coins arrondis CSS (7,5 px à l'écran = 15 px du fichier ×2, comme les angles du visuel), avec le logo LEKO en PNG ×4 à l'intérieur. Aucune jonction d'images : c'est ce qui supprime les filets clairs que produisaient les tranches sur iOS Mail, Outlook mobile et Gmail mobile quand le mail est réduit à l'écran. Apple Mail, iOS, Gmail, Outlook Mac, Outlook mobile, Outlook.com et le nouveau Outlook arrondissent tous les coins en CSS.
 - **Outlook classique Windows** ignore les coins arrondis CSS. Le code contient un bloc conditionnel réservé à Word (`<!--[if mso]>`) avec la tuile en trois rangées : tranche haute, cellule noire, tranche basse avec logo, angles cuits dans les images. Ce bloc n'est lu que si la signature est installée par le fichier `.htm` (dossier `Signatures`) ; une signature **collée** dans Outlook Windows perd les commentaires conditionnels et affiche la tuile à coins carrés.
 - **Visuel** : PNG à angles transparents, CTA et ombre inclus, une seule image cliquable.
-- **Gmail mobile** : Gmail n'affiche pas les webfonts (Helvetica à la place) et agrandissait les petits textes en réduisant la signature de 500 px à l'écran ; la mise en page fluide supprime cette réduction. Le visuel est en `width:100%;height:auto` dans un bloc de largeur définie : jamais de `max-width:100%` dans une cellule de tableau à largeur automatique, WebKit (Apple Mail) résout alors le pourcentage à zéro et l'image disparaît.
+- **Gmail mobile** : Gmail n'affiche pas les webfonts (Helvetica à la place) et agrandissait les petits textes en réduisant la signature de 500 px à l'écran ; la version mobile, affichée à sa taille native, supprime cette réduction. Ne jamais mettre `max-width:100%` ou `height:auto` sur le visuel dans une cellule de tableau : WebKit (Apple Mail) résout alors le pourcentage à zéro et l'image disparaît.
 - **Netteté** : les tranches (dont le logo) sont fournies en ×4, le visuel en ×3, tous affichés via les attributs `width`/`height` à la taille ×1. Un écran Retina (×2) ou une loupe ×2 dans le générateur restent nets.
-- **Texte réel, éditable et cliquable** : nom, fonctions, e-mail (`mailto:`), téléphone (`tel:`). Police : Neue Haas Grotesk Display Pro si installée chez le destinataire, sinon Helvetica Neue / Helvetica / Arial. Tailles : nom 15 px, fonctions 7,5 px, contacts 10 px (préréglage « Lisible » : 16 / 8,5 / 11). Graisses : nom en Medium, fonctions et contacts en Roman. Le bloc nom + fonction est posé à 19 px du haut de la tuile, comme de la gauche.
+- **Texte réel, éditable et cliquable** : nom, fonctions, e-mail (`mailto:`), téléphone (`tel:`). Police : Neue Haas Grotesk Display Pro si installée chez le destinataire, sinon Helvetica Neue / Helvetica / Arial. Tailles : nom 15 px, fonctions 8,5 px, contacts 10 px (préréglage « Lisible » : 16 / 9,5 / 11). Graisses : nom en Medium, fonctions et contacts en Roman. Le bloc nom + fonction est posé à 19 px du haut de la tuile, comme de la gauche.
 - **Liens** : le visuel et la flèche Revolt Green forment une seule image cliquable vers l'URL choisie, modifiable dans le générateur.
 
 ## Thèmes clair / sombre
@@ -72,21 +72,22 @@ Il n'existe donc aucun moyen de garantir la police dans tous les clients : c'est
 
 **Hébergement des polices** : le serveur doit renvoyer l'en-tête `Access-Control-Allow-Origin: *` sur le dossier `fonts/` (les navigateurs et WebKit refusent les polices d'une autre origine sans cet en-tête) et le type MIME `font/woff2`.
 
-## Version mobile
+## Version mobile (plan de travail 02)
 
-Deux mécanismes se superposent dans le code, du plus robuste au plus fidèle.
+Sur les téléphones, la signature affiche la mise en page du plan de travail 02 : tuile 224 × 133 (nom, fonctions, e-mail, téléphone avec le logo à sa droite) puis visuel 224 × 140, empilés. Réglage par défaut 140 % (328 × 403 px), qui tient dans la zone de lecture de tous les téléphones ; 100 %, 125 % et 150 % sont disponibles (étape 9).
 
-**1. Mise en page fluide (toujours active, aucun bloc de style).** Le tableau des colonnes est rendu en blocs : les deux colonnes se placent côte à côte quand la largeur de lecture atteint 490 px et s'empilent en dessous, tuile puis visuel, chacune à pleine largeur, écart de 5 px conservé. Les largeurs sont pilotées par `width:calc((490px - 100%) * 1000)` bornée par `min-width` (largeur desktop) et `max-width:100%` : la formule vaut zéro ou moins quand la place suffit, et une valeur énorme sinon. Tout est en styles inline, donc conservé au collage dans Outlook Mac, Apple Mail et Gmail. Word (Outlook Windows) ignore `display`, `calc` et `max-width`, lit les attributs `width` et garde un vrai tableau à colonnes.
+**Mécanisme, sans aucun bloc de style.** Les éditeurs de signature (Outlook Mac, Apple Mail, Gmail) suppriment les blocs `<style>` au collage : une media query ne survit donc pas au client d'envoi. La bascule repose uniquement sur des styles inline lus par tous les moteurs web : chaque version est placée dans un conteneur dont la largeur et la hauteur valent `calc((100vw - 539px) * 1000)` pour le desktop et `calc((540px - 100vw) * 1000)` pour le mobile, bornées par `min-width/min-height:0` et `max-width/max-height` égaux à la taille exacte du bloc, avec `overflow:hidden`. Sur un écran de moins de 540 px de large (`vw` = largeur d'écran), le conteneur desktop mesure 0 × 0 et le conteneur mobile sa taille pleine ; au-dessus, l'inverse.
 
-**2. Mise en page du plan de travail 02 (option, étape 9).** Tuile 224 × 133 avec le logo à droite du téléphone, textes agrandis, visuel recadré 224 × 140, à 150 % par défaut (352 × 432 px). Elle est dans un bloc masqué que la media query `@media only screen and (max-width:540px)` révèle à la place de la version fluide. Elle ne s'affiche que si le bloc `<style>` a survécu au client d'envoi : installation par fichier `.htm` (Outlook Windows) ou outil de signature serveur. Au collage dans Outlook Mac ou Apple Mail, l'éditeur supprime les blocs de style : les destinataires voient alors la version fluide, jamais les deux.
+| Destinataire | Rendu |
+|---|---|
+| Apple Mail iOS, Gmail iOS/Android (compte Google), Outlook iOS/Android | Plan 02 |
+| Apple Mail macOS, Gmail web, Outlook Mac, Outlook.com, nouveau Outlook, iPad | Desktop 500 × 150 |
+| Outlook classique Windows (Word ignore `calc`, `vw`, `max-*`, `overflow`) | Desktop ; le bloc mobile est masqué par `mso-hide:all` |
+| Application Gmail avec un compte non Google (IMAP) | `calc()` non lu : les deux versions s'affichent l'une sous l'autre. Seul cas connu. |
 
-| Destinataire | Signature collée (Outlook Mac, Apple Mail, Gmail) | Signature installée par `.htm` |
-|---|---|---|
-| Téléphone (Apple Mail, Gmail, Outlook mobile) | Fluide empilée, pleine largeur | Plan 02 |
-| Ordinateur, volet large | Côte à côte 500 × 150 | Côte à côte 500 × 150 |
-| Outlook classique Windows | Côte à côte, coins carrés | Côte à côte, coins arrondis (tranches) |
+Sans la version mobile (case décochée), le code redevient le seul tableau desktop, avec des largeurs minimales qui empêchent Gmail mobile d'écraser les colonnes.
 
-L'aperçu du générateur propose trois vues : desktop 500 px, téléphone 375 px fluide, téléphone 375 px plan 02. Pour un visuel personnalisé, le générateur produit les deux recadrages (855 × 420 et 672 × 420, suffixe `-mobile`).
+L'aperçu du générateur propose deux vues : desktop et téléphone (plan 02). Pour un visuel personnalisé, le générateur produit les deux recadrages (855 × 420 et 672 × 420, suffixe `-mobile`).
 
 ## Taille d'affichage
 
