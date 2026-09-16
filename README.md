@@ -74,8 +74,8 @@ Par défaut la signature fait 500 × 150 px, la taille du fichier source. L'éta
 
 ## Mise en service (une fois, par l'IT ou le marketing)
 
-1. **Héberger le dossier `assets/`** tel quel sur une URL publique HTTPS stable, par exemple `https://www.lekolabs.com/signature/`. Ne jamais renommer ni déplacer ces fichiers ensuite : chaque e-mail déjà envoyé y fait référence.
-2. Ouvrir `generateur.html`, renseigner cette URL à l'étape 5 : le générateur vérifie que chaque image répond (coches vertes).
+1. **Hébergement en place** : le dossier est publié sur GitHub Pages à `https://hadr1enhouyez.github.io/leko-signature/` (dépôt `Hadr1enHouyez/leko-signature`, miroir du code dans `LekoLabs/leko-signature`, dont l'organisation interdit les Pages). Le générateur en ligne : `https://hadr1enhouyez.github.io/leko-signature/generateur.html`. L'URL des images est pré-remplie à l'étape 5. Ne jamais renommer ni déplacer ces fichiers : chaque e-mail déjà envoyé y fait référence. Pour changer d'hébergement plus tard (lekolabs.com, organisation GitHub), toutes les signatures devront être recopiées.
+2. Pour mettre à jour : modifier les fichiers, `git push` sur `main`, GitHub Pages redéploie en une à deux minutes.
 3. Communiquer le dossier (OneDrive) aux collaborateurs : chacun ouvre `generateur.html`, remplit ses champs, clique **Copier la signature** et colle dans son client mail (procédures détaillées en bas du générateur).
 
 > Sans hébergement, le générateur intègre les images en base64 : suffisant pour un test dans Apple Mail ou Outlook Mac, mais **Gmail et Outlook Windows n'afficheront pas les images**.
