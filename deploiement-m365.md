@@ -10,17 +10,16 @@ Source : [Organization-wide message disclaimers, signatures, footers, or headers
 |---|---|
 | Droits | Administrateur Exchange (rôle « Mail flow » / Gestion de l'organisation) sur le tenant Microsoft 365 de LEKO. |
 | Limite de taille | 5 000 caractères pour le texte de la clause. Le générateur produit un code compact et affiche le compteur. |
-| Champs dynamiques | Jetons d'annuaire remplacés à l'envoi : `%%DisplayName%%`, `%%Title%%`, `%%Notes%%`, `%%WindowsEmailAddress%%`, `%%MobilePhone%%`. La fonction en français est lue dans le champ **Notes** de l'utilisateur, à renseigner pour chacun (voir plus bas). |
+| Champs dynamiques | Jetons d'annuaire remplacés à l'envoi : `%%FirstName%%`, `%%LastName%%`, `%%Title%%`, `%%Notes%%`, `%%WindowsEmailAddress%%`, `%%MobilePhone%%`. La fonction en français est lue dans le champ **Notes** de l'utilisateur, à renseigner pour chacun (voir plus bas). |
 | Position | La clause est ajoutée **à la fin du corps du message**. Dans une réponse, elle se retrouve donc sous le message cité, pas sous le texte tapé. C'est la limite principale de cette méthode, que les outils payants (Exclaimer, CodeTwo) contournent avec un complément Outlook. |
 | Brouillon | L'expéditeur ne voit pas la signature en rédigeant ; elle apparaît dans le message reçu et dans « Éléments envoyés ». |
 | Doublons | Une exception sur un marqueur invisible (`LEKO-SIG-2026`, présent dans le code) évite d'ajouter la signature à chaque réponse du fil. |
-| Bloc de style | Microsoft documente le support de l'HTML et du CSS inline. La conservation du bloc `<style>` (version mobile) doit être vérifiée en mode test avant activation : si Exchange le supprime, la règle donne la version desktop partout, et la version mobile nécessite Exclaimer ou CodeTwo. |
 
 ## 1. Préparer les fiches utilisateurs
 
 Dans le centre d'administration Microsoft 365 (`admin.microsoft.com` › Utilisateurs › Utilisateurs actifs › fiche › Informations de contact), renseigner pour chaque collaborateur :
 
-- **Nom d'affichage** : Prénom Nom, tel qu'il doit apparaître.
+- **Prénom** et **Nom** : affichés sur deux lignes.
 - **Fonction** (Job title) : fonction en anglais, première ligne.
 - **Téléphone mobile** : au format international avec espaces, par exemple `+352 691 000 000`.
 
@@ -34,7 +33,7 @@ Set-User -Identity prenom@lekolabs.com -Notes "Directeur de Création & Marque"
 
 1. Ouvrir le générateur, régler thème, taille et, si souhaité, cocher **9 · Ajouter la version mobile**. Laisser le thème sur **Clair** ou **Sombre** (le thème automatique ajoute un second bloc de style et alourdit le code).
 2. En bas de la page, section **Déploiement centralisé**, cliquer **Copier le code pour une règle de flux M365**. Le compteur doit rester sous 5 000 caractères.
-3. Coller ce code dans un fichier texte `signature-m365.html` pour archive. Un fichier prêt à l'emploi est livré dans ce dossier (thème clair, taille 100 %, version mobile 140 % : 4 879 caractères).
+3. Coller ce code dans un fichier texte `signature-m365.html` pour archive. Un fichier prêt à l'emploi est livré dans ce dossier (design V7, thème clair, 100 % : 1 886 caractères).
 
 Le code contient les jetons à la place des valeurs saisies et le marqueur invisible `LEKO-SIG-2026`.
 

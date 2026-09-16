@@ -24,7 +24,7 @@ $params = @{
   ApplyHtmlDisclaimerFallbackAction = "Ignore"
   ExceptIfSubjectOrBodyMatchesPatterns = "LEKO-SIG-2026"   # évite une seconde signature dans les réponses
   Mode                              = $(if ($Enforce) { "Enforce" } else { "Audit" })
-  Comments                          = "Signature LEKO 2026 — générée le $(Get-Date -Format 'yyyy-MM-dd'). Desktop 500x150 + version mobile (plan 02)."
+  Comments                          = "Signature LEKO 2026 — générée le $(Get-Date -Format 'yyyy-MM-dd'). Design V7 398x301."
 }
 if ($Pilote) { $params.FromMemberOf = $Pilote } else { $params.FromScope = "InOrganization" }
 
@@ -37,5 +37,5 @@ if ($existante) {
   Write-Host "Règle « $Nom » créée." -ForegroundColor Green
 }
 Write-Host ("Mode : " + $(if ($Enforce) { "APPLIQUÉE à " + $(if ($Pilote) { $Pilote } else { "toute l'organisation" }) } else { "TEST (aucune signature ajoutée ; relancer avec -Enforce pour activer)" }))
-Write-Host "Champs lus dans l'annuaire : Nom d'affichage, Fonction (EN), Notes (fonction FR), E-mail, Téléphone mobile."
+Write-Host "Champs lus dans l'annuaire : Prénom, Nom, Fonction (EN), Notes (fonction FR), E-mail, Téléphone mobile."
 Disconnect-ExchangeOnline -Confirm:$false
