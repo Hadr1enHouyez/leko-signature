@@ -267,8 +267,8 @@ const FILES = { topBlack:"tile-top-black@4x.png", topWhite:"tile-top-white@4x.pn
 const FONT_FILES = { medium:"../fonts/NeueHaasGroteskDisplayPro-65Medium.woff2", roman:"../fonts/NeueHaasGroteskDisplayPro-55Roman.woff2" };
 // Tailles à 100 % (fichier source ×2 : 800 × 600). Lignes de base mesurées sur le plan de travail.
 const PRESETS = {
-  faithful: {PT_LOGO:18,FS_NAME:11,LH_NAME:13,PT_NAME:50,FS_TITLE:8,LH_TITLE:9,PT_TITLE:0,FS_CONTACT:10,LH_CONTACT:15,PT_CONTACT:53},
-  readable: {PT_LOGO:18,FS_NAME:12,LH_NAME:14,PT_NAME:49,FS_TITLE:9,LH_TITLE:10,PT_TITLE:0,FS_CONTACT:11,LH_CONTACT:16,PT_CONTACT:51}
+  faithful: {PT_LOGO:18,FS_NAME:11,LH_NAME:13,PT_NAME:50,FS_TITLE:8,LH_TITLE:9,PT_TITLE:0,FS_CONTACT:10,LH_CONTACT:15,PT_CONTACT:53.5},
+  readable: {PT_LOGO:18,FS_NAME:12,LH_NAME:14,PT_NAME:49,FS_TITLE:9,LH_TITLE:10,PT_TITLE:0,FS_CONTACT:11,LH_CONTACT:16,PT_CONTACT:53.5}
 };
 const BASE_DIMS={pad:5,tileW:388,tileH:143,gap:5,visW:388,visH:143,padL:19,padR:19,topH:8,botH:8,logoW:99,logoH:27,spacerW:76};
 const DEFAULTS = {
@@ -310,7 +310,7 @@ function dims(){
   d.radius=Math.round(7.5*s*10)/10; d.textW=d.tileW-d.padL-d.padR; d.outerW=d.tileW+2*d.pad; d.outerH=d.tileH+d.gap+d.visH+2*d.pad; d.s=s;
   return d;
 }
-function scaledPreset(p,s){const o={}; for(const k in p){ o[k]= k.startsWith("FS_")||k.startsWith("LH_") ? Math.round(p[k]*s*10)/10 : Math.round(p[k]*s); } o.LS_NAME=0; o.LS_TITLE=Math.round(0.2*s*100)/100; o.LS_CONTACT=Math.round(0.25*s*100)/100; return o;}
+function scaledPreset(p,s){const o={}; for(const k in p){ o[k]= k.startsWith("FS_")||k.startsWith("LH_") ? Math.round(p[k]*s*10)/10 : Math.round(p[k]*s*2)/2; } o.LS_NAME=0; o.LS_TITLE=Math.round(0.2*s*100)/100; o.LS_CONTACT=Math.round(0.25*s*100)/100; return o;}
 
 function imageSources(forExport){
   const base=assetsBase(), hosted=!!base;
