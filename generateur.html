@@ -35,7 +35,7 @@
   .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
   .preview-wrap{border:1px dashed var(--line);border-radius:12px;padding:28px;display:flex;justify-content:center;align-items:flex-start;overflow:auto;background:#fff;min-height:220px;background-image:linear-gradient(45deg,#f6f6f6 25%,transparent 25%),linear-gradient(-45deg,#f6f6f6 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#f6f6f6 75%),linear-gradient(-45deg,transparent 75%,#f6f6f6 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0}
   .preview-wrap.dark{background:#1f1f1f;background-image:none}
-  #preview{zoom:1;flex:0 0 auto}
+  #preview{zoom:1;flex:0 0 auto;background:transparent}
   .toolbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:12.5px;color:var(--muted);margin-bottom:10px}
   .toolbar label{display:inline-flex;align-items:center;gap:6px;margin:0;color:var(--muted)}
   textarea{width:100%;min-height:160px;font:11.5px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:8px;padding:10px;white-space:pre;color:#333;background:#fafaf8}
@@ -59,7 +59,7 @@
 <div id="local-banner" style="display:none;background:#fff6d6;border:1px solid #e8d48a;color:#5a4a00;border-radius:8px;padding:10px 14px;margin:12px 16px 0;font-size:13px;">Vous utilisez la copie locale du générateur. Pour partager avec les collègues, utilisez la version en ligne&nbsp;: <a id="local-banner-link" href="https://hadr1enhouyez.github.io/leko-signature/generateur.html" style="color:#5a4a00;font-weight:600;">hadr1enhouyez.github.io/leko-signature/generateur.html</a></div>
 <header>
   <div class="logo">LEKO</div>
-  <div class="sub">Générateur de signature mail — 2026 V7 · plan 07 · 400 × 196 px · une seule mise en page, ordinateur et téléphone</div>
+  <div class="sub">Générateur de signature mail — 2026 V7 · plan 07 · 400 × 213 px · une seule mise en page, ordinateur et téléphone</div>
   <div class="pill">Design V7</div>
 </header>
 
@@ -75,7 +75,7 @@
       <input id="f-title1" type="text" data-key="title1" placeholder="Founder &amp; CEO - Executive Chairman">
       <label for="f-title2">Seconde ligne (optionnel)</label>
       <input id="f-title2" type="text" data-key="title2" placeholder="Laisser vide pour une seule ligne, comme le fichier source">
-      <div class="hint">Le nom en Medium 12 px, la fonction en Roman 10 px, en texte réel noir sur le fond du mail (plus de tuile derrière le texte : rien à déformer pour Outlook). Une fonction trop longue passe sur deux lignes.</div>
+      <div class="hint">Le nom en Medium 15 px, la fonction en Roman 12,5 px, en texte réel noir sur le fond du mail (plus de tuile derrière le texte : rien à déformer pour Outlook). Une fonction trop longue passe sur deux lignes.</div>
     </div>
 
     <div class="card">
@@ -135,7 +135,7 @@
     <div class="card">
       <h2>6 · Taille du texte</h2>
       <div class="radio">
-        <label><input type="radio" name="preset" value="faithful" data-key="preset" checked> <span><strong>Fidèle au fichier source</strong> — nom 12 px, fonction 10 px</span></label>
+        <label><input type="radio" name="preset" value="faithful" data-key="preset" checked> <span><strong>Fichier source agrandi</strong> — nom 15 px, fonction 12,5 px (fichier : 12 et 10), espace texte → images 22 px (fichier : 11)</span></label>
       </div>
       <div id="height-note"></div>
     </div>
@@ -150,9 +150,9 @@
     <div class="card">
       <h2>8 · Taille d'affichage de la signature</h2>
       <div class="radio">
-        <label><input type="radio" name="scale" value="1" data-key="scale"> <span><strong>100 %</strong> — 400 × 196 px (taille du fichier source, recommandée : s'affiche sans réduction sur les téléphones)</span></label>
-        <label><input type="radio" name="scale" value="1.25" data-key="scale"> <span><strong>125 %</strong> — 500 × 245 px</span></label>
-        <label><input type="radio" name="scale" value="1.5" data-key="scale"> <span><strong>150 %</strong> — 600 × 294 px</span></label>
+        <label><input type="radio" name="scale" value="1" data-key="scale"> <span><strong>100 %</strong> — 400 × 213 px (taille du fichier source, recommandée : s'affiche sans réduction sur les téléphones)</span></label>
+        <label><input type="radio" name="scale" value="1.25" data-key="scale"> <span><strong>125 %</strong> — 500 × 266 px</span></label>
+        <label><input type="radio" name="scale" value="1.5" data-key="scale"> <span><strong>150 %</strong> — 600 × 320 px</span></label>
       </div>
       <div class="hint">Change réellement les dimensions du code exporté. La « Loupe ×2 » de l'aperçu ne sert qu'à contrôler la netteté.</div>
     </div>
@@ -162,7 +162,7 @@
 
   <section>
     <div class="card">
-      <h2>Aperçu (taille réelle <span id="dims-label">400 × 196</span> px)</h2>
+      <h2>Aperçu (taille réelle <span id="dims-label">400 × 213</span> px)</h2>
       <div class="toolbar">
         <label title="Aperçu uniquement : n'agrandit pas la signature exportée"><input type="checkbox" id="zoom2"> Loupe ×2 (aperçu seulement)</label>
         <label><input type="checkbox" id="darkbg"> Fond sombre</label>
@@ -261,9 +261,10 @@ const EMBED = {
 const FILES = { visual:"visual-wide-robotics@3x.png", tileBlack:"logo-tile-black@4x.png", tileWhite:"logo-tile-white@4x.png" };
 const FONT_FILES = { medium:"../fonts/NeueHaasGroteskDisplayPro-65Medium.woff2", roman:"../fonts/NeueHaasGroteskDisplayPro-55Roman.woff2" };
 // Plan de travail 07 (fichier ×2 : 800 × 390,64). Valeurs à 100 % en px : texte en haut à gauche, visuel large + tuile logo en dessous.
-// Lignes de base mesurées : nom 22,39 (Medium 24 ×2), fonction 34,6 (Roman 20 ×2), x = 13,2 ; visuel à y 47,82.
+// Fichier : nom Medium 12 px (ligne de base 22,4), fonction Roman 10 px (34,6), x = 13,2, visuel à y 47,8 ; espace texte→visuel 11 px.
+// Demande du 17/09 (15 h 30) : polices +3 / +2,5 px (15 et 12,5), espace texte→visuel doublé (22 px), fixe même avec une seconde ligne.
 const PRESETS = {
-  faithful: {PT_NAME:12,FS_NAME:12,LH_NAME:13,PT_TITLE:1,FS_TITLE:10,LH_TITLE:11,VIS_TOP:48}
+  faithful: {PT_NAME:12,FS_NAME:15,LH_NAME:16,PT_TITLE:1,FS_TITLE:12.5,LH_TITLE:14,PB_TEXT:22}
 };
 const BASE_DIMS={padL:5,padR:7,padB:5,textX:13,visW:319,visH:143,gap:5,tileW:64,tileH:143};
 const ONLINE_URL="https://hadr1enhouyez.github.io/leko-signature/generateur.html";
@@ -312,8 +313,8 @@ function dims(){
   return d;
 }
 function scaledPreset(p,s){const o={}; for(const k in p){ o[k]= k.startsWith("FS_")||k.startsWith("LH_") ? Math.round(p[k]*s*10)/10 : Math.round(p[k]*s*2)/2; } o.LS_NAME=0; o.LS_TITLE=0; return o;}
-// Espace sous le texte pour que le visuel commence à la hauteur du fichier (48 px), quel que soit le nombre de lignes de fonction.
-function textBottomPad(p, nLines){ const block=p.LH_NAME+(nLines?p.PT_TITLE+p.LH_TITLE*nLines:0); return Math.max(Math.round((p.VIS_TOP-p.PT_NAME-block)*2)/2, 4); }
+// Espace fixe entre le texte et les images, quel que soit le nombre de lignes de fonction.
+function textBottomPad(p, nLines){ return p.PB_TEXT; }
 
 function imageSources(forExport){
   const base=assetsBase(), hosted=!!base;
@@ -505,9 +506,10 @@ async function copyRich(){
       setStatus(isAuto ? "Signature copiée en version claire (le thème automatique ne survit pas au collage ; utilisez « Télécharger signature.htm » pour l'installer par fichier)." : "Signature copiée. Collez-la dans l'éditeur de signature de votre client mail."); return; }
     throw new Error("no clipboard api");
   }catch(err){
-    const tmp=document.createElement("div"); tmp.innerHTML=html; tmp.style.position="fixed"; tmp.style.left="-9999px"; document.body.appendChild(tmp);
-    const range=document.createRange(); range.selectNodeContents(tmp); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(range);
-    const ok=document.execCommand("copy"); sel.removeAllRanges(); tmp.remove();
+    // Secours : écriture directe du code dans l'événement copy, sans passer par une sélection (qui emporterait les styles et le fond de la page).
+    const onCopy=e=>{ e.preventDefault(); e.clipboardData.setData("text/html", html); e.clipboardData.setData("text/plain", plain); };
+    document.addEventListener("copy", onCopy, {once:true});
+    let ok=false; try{ ok=document.execCommand("copy"); }catch(e2){ ok=false; } document.removeEventListener("copy", onCopy);
     setStatus(ok?"Signature copiée (mode de secours). Collez-la dans votre client mail.":"Copie impossible : sélectionnez l'aperçu à la souris et copiez-le manuellement.", ok);
   }
 }
