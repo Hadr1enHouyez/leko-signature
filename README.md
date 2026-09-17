@@ -1,6 +1,6 @@
 # LEKO — Signature mail 2026 V7 (plan de travail 07)
 
-Signature HTML de **400 × 196 px**, construite à partir de `Artwork/Signature_Mail_LEKO_2026_V7.ai`, plan de travail 07 (source ×2 = 800 × 390,64, fichier du 17 septembre 2026, 14 h 42). Une seule mise en page pour tous les appareils : elle tient dans la zone de lecture des téléphones sans réduction. Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iOS/Android.
+Signature HTML de **400 × 213 px**, construite à partir de `Artwork/Signature_Mail_LEKO_2026_V7.ai`, plan de travail 07 (source ×2 = 800 × 390,64, fichier du 17 septembre 2026, 14 h 42). Une seule mise en page pour tous les appareils : elle tient dans la zone de lecture des téléphones sans réduction. Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iOS/Android.
 
 Générateur en ligne : **https://hadr1enhouyez.github.io/leko-signature/generateur.html**
 
@@ -8,8 +8,9 @@ Générateur en ligne : **https://hadr1enhouyez.github.io/leko-signature/generat
 
 ```
 ┌────────────────────────────────────────────────────┐
-│  Prénom Nom                 (Medium 12 px, noir)   │
-│  Fonction                   (Roman 10 px, noir)    │
+│  Prénom Nom                 (Medium 15 px, noir)   │
+│  Fonction                   (Roman 12,5 px, noir)  │
+│                             (espace 22 px)         │
 │ ┌──────────────────────────────────┐  ┌──────┐     │
 │ │  visuel 319 × 143, coins 6,8 px  │  │ tuile│     │
 │ │  CTA Revolt Green ombré (bas dr.)│  │ noire│     │
@@ -20,7 +21,8 @@ Générateur en ligne : **https://hadr1enhouyez.github.io/leko-signature/generat
 
 - **Texte en haut à gauche, en texte réel** sur le fond du mail : plus aucune tuile derrière le nom. C'est ce qui règle définitivement le rendu d'Outlook Windows, qui déformait le bloc noir contenant du texte (interlignes, coins, retours à la ligne). Il n'y a plus rien à déformer : deux lignes de texte, puis deux images.
 - **Deux images fixes, identiques pour tout le monde** : le visuel (319 × 143, CTA intégré) et la tuile logo (64 × 143, noire à logo blanc). Aucune image à produire par personne, donc Gmail est servi comme les autres clients. Les deux images sont cliquables vers l'URL choisie.
-- Géométrie mesurée sur le plan 07 (px à 100 %) : texte à x = 13,2 ; ligne de base du nom 22,4 ; ligne de base de la fonction 34,6 ; visuel à (5, 47,8) ; tuile à (329,3, 47,8) ; marge droite 7,1 ; marge basse 5. Rendu vérifié dans Chromium : nom 22,5, fonction 34,5, visuel (5, 48), tuile (329, 48), largeurs de texte à ±0,2 px du fichier.
+- Géométrie du plan 07 (px à 100 %) : texte à x = 13,2 ; nom Medium 12 px (ligne de base 22,4) ; fonction Roman 10 px (34,6) ; visuel à (5, 47,8) ; tuile à (329,3, 47,8) ; marge droite 7,1 ; marge basse 5.
+- **Écarts demandés le 17 septembre 2026 (15 h 30)** : polices agrandies (nom 15 px / interligne 16, fonction 12,5 px / interligne 14) et espace texte → images doublé (22 px au lieu de 11), fixe même avec une seconde ligne. Hauteur totale 213 px (227 avec seconde ligne). Rendu vérifié dans Chromium : lignes de base 25 et 39,5, images à (5, 65) et (329, 65).
 
 ## Contenu du dossier
 
@@ -28,7 +30,7 @@ Générateur en ligne : **https://hadr1enhouyez.github.io/leko-signature/generat
 |---|---|
 | `generateur.html` | **Point d'entrée pour les collaborateurs.** Formulaire (prénom, nom, fonction, seconde ligne optionnelle, lien), thème, aperçu en temps réel avec la police Neue Haas embarquée, copie de la signature, export `.htm`, lien pré-rempli (toujours vers la version en ligne), composition d'un visuel personnalisé, export pour règle de flux Microsoft 365. Identique en ligne et dans ce dossier. |
 | `signature-exemple.html` | Exemple complet du code généré (thème clair, champs neutres, images hébergées, 2,9 Ko). |
-| `signature-m365.html` | Code compact pour une règle de flux Microsoft 365 (jetons `%%FirstName%%`, `%%LastName%%`, `%%Title%%`, 1 480 caractères pour 5 000 autorisés). |
+| `signature-m365.html` | Code compact pour une règle de flux Microsoft 365 (jetons `%%FirstName%%`, `%%LastName%%`, `%%Title%%`, 1 482 caractères pour 5 000 autorisés). |
 | `deploiement-m365.md`, `deploiement-m365.ps1` | Procédure et script pour le déploiement centralisé côté serveur, si LEKO le souhaite un jour. |
 | `assets/v7/` | Images, **hébergées** sur GitHub Pages dans le même sous-dossier. Les images des versions précédentes restent en ligne pour les mails déjà envoyés : ne rien supprimer ni modifier. |
 | `assets/fonts/` | Webfonts Neue Haas Grotesk Display Pro (Medium, Roman), sous-ensemble latin ; utilisées par l'aperçu du générateur et par l'option webfont. |
@@ -45,7 +47,8 @@ Générateur en ligne : **https://hadr1enhouyez.github.io/leko-signature/generat
 ## Comment la signature est construite
 
 - **Tableaux HTML imbriqués et styles inline** uniquement : seule structure rendue à l'identique par le moteur Word d'Outlook Windows.
-- **Texte** : cellule à `padding:12px 7px 11px 13px`, nom en `font-weight:600` 12 px / interligne 13 px, fonction en `normal` 10 px / interligne 11 px (`mso-line-height-rule:exactly`), pas d'interlettrage (mesuré nul sur le fichier). Une seconde ligne optionnelle s'ajoute sous la fonction ; l'espace sous le texte se recalcule pour que le visuel reste à 48 px du haut quand c'est possible. Une fonction trop longue passe sur deux lignes et rehausse la signature : le générateur l'indique.
+- **Texte** : cellule à `padding:12px 7px 22px 13px`, nom en `font-weight:600` 15 px / interligne 16 px, fonction en `normal` 12,5 px / interligne 14 px (`mso-line-height-rule:exactly`), pas d'interlettrage (mesuré nul sur le fichier). Une seconde ligne optionnelle s'ajoute sous la fonction ; l'espace de 22 px sous le texte est fixe. Une fonction trop longue passe sur deux lignes et rehausse la signature : le générateur l'indique.
+- **Aucun fond** dans le code : la signature s'affiche sur le fond du mail. Le bouton « Copier la signature » écrit le code exact dans le presse-papiers (API Clipboard, ou événement `copy` en secours) : le fond gris de la page du générateur ne peut pas être emporté, contrairement à une copie par sélection à la souris.
 - **Images** : `width`/`height` fixes en attributs et en style, `display:block`. Jamais de `max-width:100%` ni `height:auto` dans une cellule de tableau (WebKit / Apple Mail résout le pourcentage à zéro et l'image disparaît). Écart de 5 px entre visuel et tuile par une cellule intercalaire.
 - **Largeur minimale** sur le tableau : empêche Gmail mobile d'écraser la mise en page.
 - **Netteté** : visuel ×3, tuile ×4, affichés à la taille ×1 par les attributs.
@@ -67,7 +70,7 @@ Le générateur charge les webfonts embarquées pour l'aperçu : la signature s'
 
 ## Taille d'affichage
 
-Par défaut 400 × 196 px, la taille du fichier source, recommandée : elle s'affiche sans réduction sur les téléphones. L'étape 8 propose 125 % (500 × 245) et 150 % (600 × 294), qui seront réduits sur mobile. La « Loupe ×2 » de l'aperçu ne fait qu'agrandir l'affichage dans le générateur.
+Par défaut 400 × 213 px (largeur du fichier source), recommandée : elle s'affiche sans réduction sur les téléphones. L'étape 8 propose 125 % (500 × 266) et 150 % (600 × 320), qui seront réduits sur mobile. La « Loupe ×2 » de l'aperçu ne fait qu'agrandir l'affichage dans le générateur.
 
 ## Mise en service
 
@@ -99,4 +102,4 @@ Le fichier `.ai` est compatible PDF (PyMuPDF), plan de travail 07 = page 7 (800 
 
 - V6 (16 septembre 2026) : design 500 × 150 puis version mobile distincte, abandonnée (aucune méthode par collage ne permet de changer de mise en page sur mobile).
 - V7 plans 01 à 03 (16–17 septembre 2026) : mise en page unique 398 × 251 avec tuile noire contenant le texte, puis tuile rendue en image par le générateur pour Outlook Windows.
-- **V7 plan 07 (17 septembre 2026, 15 h) : version actuelle.** Texte hors tuile, visuel large et tuile logo fixe.
+- **V7 plan 07 (17 septembre 2026, 15 h) : version actuelle.** Texte hors tuile, visuel large et tuile logo fixe. 15 h 30 : polices agrandies (15 / 12,5 px) et espace texte → images doublé, à la demande de Hadrien.
