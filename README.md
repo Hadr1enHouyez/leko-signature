@@ -1,6 +1,6 @@
 # LEKO — Signature mail 2026 V7
 
-Signature HTML de **398 × 301 px**, construite à partir de `Artwork/Signature_Mail_LEKO_2026_V7.ai` (plan de travail 02, source ×2 = 800 × 600, version finale du 17 septembre 2026, 01 h). Une seule mise en page pour tous les appareils : sa largeur tient dans la zone de lecture des téléphones sans réduction, le texte y garde sa taille réelle. Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iOS/Android.
+Signature HTML de **398 × 251 px**, construite à partir de `Artwork/Signature_Mail_LEKO_2026_V7.ai` (plan de travail 03, source ×2 = 800 × 502, version du 17 septembre 2026, 12 h). Une seule mise en page pour tous les appareils : sa largeur tient dans la zone de lecture des téléphones sans réduction, le texte y garde sa taille réelle. Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iOS/Android.
 
 Générateur en ligne : **https://hadr1enhouyez.github.io/leko-signature/generateur.html**
 
@@ -10,25 +10,26 @@ Générateur en ligne : **https://hadr1enhouyez.github.io/leko-signature/generat
 |---|---|
 | `generateur.html` | **Point d'entrée pour les collaborateurs.** Formulaire (prénom, nom, fonctions, e-mail, téléphone, lien), thème, aperçu en temps réel, copie de la signature, export `.htm`, lien pré-rempli, composition d'un visuel personnalisé, export pour règle de flux Microsoft 365. Identique en ligne et dans ce dossier. |
 | `signature-exemple.html` | Exemple complet du code généré (thème clair, champs neutres, images hébergées). |
-| `signature-m365.html` | Code compact pour une règle de flux Microsoft 365 (jetons d'annuaire, 2 290 caractères pour 5 000 autorisés). |
+| `signature-m365.html` | Code compact pour une règle de flux Microsoft 365 (jetons d'annuaire `%%FirstName%%`, `%%LastName%%`, `%%Title%%`, `%%Notes%%`, 1 723 caractères pour 5 000 autorisés). |
 | `deploiement-m365.md`, `deploiement-m365.ps1` | Procédure et script pour le déploiement centralisé côté serveur, si LEKO le souhaite un jour. |
 | `assets/v7/` | Images du design V7, **hébergées** sur GitHub Pages dans le même sous-dossier. Les images des versions précédentes restent en ligne à la racine `assets/` du dépôt pour les mails déjà envoyés : ne rien supprimer. |
 | `assets/fonts/` | Webfonts Neue Haas Grotesk Display Pro (Medium, Roman), sous-ensemble latin. |
 
-### Assets V7
+### Assets V7 (plan de travail 03)
 
 | Fichier | Taille affichée | Résolution | Rôle |
 |---|---|---|---|
-| `visual-robotics@3x.png` / `.jpg` | 388 × 143 | ×3 (1164 × 429) | Visuel par défaut, rééchantillonné en Lanczos depuis la photo source, angles transparents, **CTA ombré intégré** (une seule image cliquable) |
-| `logo-white-3@4x.png` / `logo-black-3@4x.png` | 99 × 27 | ×4 (396 × 108) | Grand logo LEKO en haut à gauche de la tuile ; PNG à fond transparent (alpha issu de la luminance du rendu blanc sur noir), marge de 2 px ; blanc sur tuile noire, noir sur tuile blanche. Les fichiers `logo-*@4x.png` et `logo-*-2@4x.png` des versions précédentes restent en ligne pour les signatures déjà collées |
-| `tile-top-black@4x.png` / `tile-bottom-black@4x.png` (+ `-white`) | 388 × 8 | ×4 (1552 × 32) | Angles de la tuile, **Outlook Windows uniquement** (bloc conditionnel) |
-| `cta-shadow@3x.png` | — | ×3 | CTA avec son ombre, extrait du fichier source ; posé par le générateur sur les visuels personnalisés à la position du fichier |
+| `visual-robotics-2@3x.png` / `.jpg` | 388 × 143 | ×3 (1164 × 429) | Visuel par défaut, rééchantillonné en Lanczos depuis la photo source, angles transparents (rayon 6,7 px comme le fichier), **CTA ombré intégré** |
+| `logo-white-4@4x.png` / `logo-black-4@4x.png` | 114 × 31 | ×4 (456 × 124) | Grand logo LEKO à droite de la tuile ; PNG à fond transparent (alpha issu de la luminance du rendu blanc sur noir), marge de 2 px ; blanc sur tuile noire, noir sur tuile blanche |
+| `tile-top-black-2@4x.png` / `tile-bottom-black-2@4x.png` (+ `-white-2`) | 388 × 8 | ×4 (1552 × 32) | Angles de la tuile (rayon 6 px), **Outlook Windows uniquement** (bloc conditionnel) |
+| `cta-shadow-2@3x.png` | — | ×3 | CTA avec son ombre, posé par le générateur sur les visuels personnalisés |
+| anciens fichiers (`visual-robotics@3x`, `logo-*`, `logo-*-2`, `logo-*-3`, `tile-*@4x`, `cta-shadow@3x`) | — | — | Conservés en ligne pour les signatures copiées avec les designs précédents : ne rien supprimer ni modifier |
 
 ## Comment la signature est construite
 
 - **Tableaux HTML imbriqués et styles inline** uniquement : seule structure rendue à l'identique par le moteur Word d'Outlook Windows.
-- **Tuile noire** : une seule cellule à fond noir et coins arrondis CSS (7,5 px à l'écran = 15 px du fichier ×2), texte réel à l'intérieur. Aucune jonction d'images, donc aucun filet sur mobile. Apple Mail, iOS, Gmail, Outlook Mac, Outlook mobile, Outlook.com et le nouveau Outlook arrondissent les coins ; Outlook classique Windows reçoit un bloc conditionnel en trois rangées (tranches d'angles en images) qui n'est lu qu'à l'installation par fichier `.htm` ; collée, la tuile y a des coins carrés.
-- **Texte** (plan de travail 02) : grand logo LEKO 99 × 27 en haut à gauche ; en bas à gauche, prénom et nom en Medium 11 px puis fonctions en Roman 8 px sur deux lignes ; en bas, e-mail souligné et téléphone en Roman 10 px alignés à droite, à 95 px du bord droit de la tuile (colonne vide de 76 px), le téléphone exactement sur la ligne de base de la seconde fonction (même écart au bas de la tuile). Interlettrage +0,2 / +0,25 px. Lignes de base vérifiées à ±0,5 px contre le plan de travail. Préréglage « Lisible » : nom 12 px, fonctions 9 px, contacts 11 px.
+- **Tuile noire** : une seule cellule à fond noir et coins arrondis CSS (6 px à l'écran = 12 px du fichier ×2), texte réel à l'intérieur. Aucune jonction d'images, donc aucun filet sur mobile. Apple Mail, iOS, Gmail, Outlook Mac, Outlook mobile, Outlook.com et le nouveau Outlook arrondissent les coins ; Outlook classique Windows reçoit un bloc conditionnel en trois rangées (tranches d'angles en images) qui n'est lu qu'à l'installation par fichier `.htm` ; collée, la tuile y a des coins carrés.
+- **Texte** (plan de travail 03) : à gauche, prénom et nom en Medium 12,5 px puis deux champs libres en Roman 9 px (fonction anglaise et française, ou autre) ; à droite, grand logo LEKO 114 × 31 aligné au bord droit. Plus d'e-mail ni de téléphone dans ce design. Interlettrage +0,2 px sur les champs. Lignes de base vérifiées à ±0,4 px contre le plan de travail. Un seul préréglage de taille.
 - **Liens** : e-mail (`mailto:`) souligné, téléphone (`tel:`) non souligné ; couleur et soulignement répétés sur une balise imbriquée dans le lien, car Outlook Windows applique son style « Lien hypertexte » à la balise elle-même.
 - **Visuel** : PNG à angles transparents avec CTA intégré, en `width`/`height` fixes. Jamais de `max-width:100%` ni `height:auto` dans une cellule de tableau (WebKit / Apple Mail résout le pourcentage à zéro et l'image disparaît).
 - **Largeur minimale** sur le tableau : empêche Gmail mobile d'écraser la mise en page.
@@ -51,7 +52,7 @@ Pile `'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Helvetica, Arial`. L'op
 
 ## Taille d'affichage
 
-Par défaut 398 × 301 px, la taille du fichier source, recommandée : elle s'affiche sans réduction sur les téléphones. L'étape 8 propose 125 % (498 × 376) et 150 % (597 × 451), qui seront réduits sur mobile. La « Loupe ×2 » de l'aperçu ne fait qu'agrandir l'affichage dans le générateur.
+Par défaut 398 × 251 px, la taille du fichier source, recommandée : elle s'affiche sans réduction sur les téléphones. L'étape 8 propose 125 % (498 × 313) et 150 % (597 × 379), qui seront réduits sur mobile. La « Loupe ×2 » de l'aperçu ne fait qu'agrandir l'affichage dans le générateur.
 
 ## Mise en service
 
@@ -80,4 +81,4 @@ Afficher une mise en page différente sur mobile exige un bloc `<style>` (media 
 
 ## Régénérer les assets depuis Illustrator
 
-Le fichier `.ai` est compatible PDF (PyMuPDF). Tuile noire `[10,10]–[785.8,295]` (rayon 15) : tranches `y 10–26` et `y 279–295` rendues à ×2 de la source avec fond transparent, variantes blanches par inversion RVB. Visuel : recadrage de la photo source correspondant à la fenêtre `[10,305]–[785.8,590]`, Lanczos vers 1164 × 429, masque arrondi 22,5 px, puis composition du CTA ombré (zone rendu après suppression de la photo. Logo : rendu ×2 de la zone `[45.6,45.6]–[243.3,99.5]` du plan de travail 02 avec tous les calques (blanc sur noir), alpha = luminance, recadré sur les lettres avec 2 px de marge (396 × 108) ; variante noire = même alpha sur du noir. Ne pas se fier au masquage des calques de PyMuPDF pour ce fichier : le fond noir reste rendu. **Règle** : une image publiée ne change jamais de proportions sous le même nom, les signatures déjà collées en dépendent ; on publie un nouveau fichier. CTA : zone `[685.2,489.6]–[783.2,587.6]`, posé en (1013, 277).
+Le fichier `.ai` est compatible PDF (PyMuPDF), plan de travail 03 (page 3). Tuile `[10,11]–[785.8,196.9]` (rayon 12 ×2 = 6 px) : tranches `y 11–27` et `y 180.9–196.9` rendues à ×2 avec fond transparent, variantes blanches par inversion RVB. Visuel : fenêtre `[10,206.9]–[785.8,491.9]` de la photo source, Lanczos vers 1164 × 429, masque arrondi mesuré sur le fichier (6,7 px ×3), CTA ombré (zone `[685.5,391.5]–[783.5,489.5]`, posé en (1013, 277)) rendu après suppression de la photo. Logo : rendu ×2 de la zone `[522.4,100.8]–[750.1,162.6]` avec tous les calques (blanc sur noir), alpha = luminance, recadré sur les lettres avec 2 px de marge (456 × 124). Ne pas se fier au masquage des calques de PyMuPDF pour ce fichier : le fond noir reste rendu. **Règle** : une image publiée ne change jamais de proportions sous le même nom, les signatures déjà collées en dépendent ; on publie un nouveau fichier.
