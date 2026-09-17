@@ -56,6 +56,7 @@
 </style>
 </head>
 <body>
+<div id="local-banner" style="display:none;background:#fff6d6;border:1px solid #e8d48a;color:#5a4a00;border-radius:8px;padding:10px 14px;margin:12px 16px 0;font-size:13px;">Vous utilisez la copie locale du générateur. Pour partager avec les collègues, utilisez la version en ligne&nbsp;: <a id="local-banner-link" href="https://hadr1enhouyez.github.io/leko-signature/generateur.html" style="color:#5a4a00;font-weight:600;">hadr1enhouyez.github.io/leko-signature/generateur.html</a></div>
 <header>
   <div class="logo">LEKO</div>
   <div class="sub">Générateur de signature mail — 2026 V7 · 398 × 251 px · une seule mise en page, ordinateur et téléphone</div>
@@ -271,6 +272,7 @@ const PRESETS = {
   faithful: {PT_NAME:45,FS_NAME:12.5,LH_NAME:13,FS_TITLE:9,LH_TITLE:9,PT_TITLE:0,PT_LOGO:45}
 };
 const BASE_DIMS={pad:5,tileW:388,tileH:93,gap:5,visW:388,visH:143,padL:19,padR:19,topH:8,botH:8,logoW:114,logoH:31};
+const ONLINE_URL="https://hadr1enhouyez.github.io/leko-signature/generateur.html";
 const DEFAULTS = {
   firstName:"Prénom", lastName:"Nom",
   title1:"Champ 1", title2:"Champ 2",
@@ -567,14 +569,14 @@ async function copyRich(){
 function shareLink(){
   const q=new URLSearchParams();
   SHARE_KEYS.forEach(k=>{ const v=state[k]; if(v===undefined||v===null||v==="") return; if(k==="webfont"){ if(v) q.set(k,"1"); return; } if(String(v)!==String(DEFAULTS[k])||["firstName","lastName","title1","title2","email","phone"].includes(k)) q.set(k,String(v)); });
-  return location.href.split(/[?#]/)[0]+"?"+q.toString();
+  // Toujours un lien vers la version en ligne : un lien vers le fichier local (file://) ou un serveur de test n'ouvre rien chez un collègue.
+  const base = /^https?:$/.test(location.protocol) && /github\.io$/.test(location.hostname) ? location.href.split(/[?#]/)[0] : ONLINE_URL;
+  return base+"?"+q.toString();
 }
 $("#btn-link").addEventListener("click", async ()=>{
   const link=shareLink();
   try{ await navigator.clipboard.writeText(link); setStatus("Lien pré-rempli copié."); }catch(e){ prompt("Copiez ce lien :", link); }
-  $("#link-note").innerHTML = location.protocol==="file:"
-    ? '<div class="note warn">Ce lien pointe vers le fichier sur cet ordinateur. Pour un lien valable pour tous, utilisez le générateur en ligne.</div>'
-    : '<div class="note ok">Lien copié : il ouvre ce générateur avec les champs déjà renseignés. Le collègue n\'a plus qu\'à cliquer « Copier la signature ».</div>';
+  $("#link-note").innerHTML = '<div class="note ok">Lien copié : il ouvre le générateur <b>en ligne</b> avec les champs déjà renseignés. Le collègue n\'a plus qu\'à cliquer « Copier la signature ».</div>';
 });
 $("#btn-copy").addEventListener("click", copyRich);
 $("#btn-copy-html").addEventListener("click", async ()=>{ try{ await navigator.clipboard.writeText($("#code").value); setStatus("Code HTML copié."); }catch(e){ $("#code").select(); document.execCommand("copy"); setStatus("Code HTML copié."); } });
@@ -582,6 +584,7 @@ $("#btn-dl-tile").addEventListener("click", ()=>{ const th=state.theme==="dark"?
 $("#btn-dl-html").addEventListener("click", ()=>{ download("signature-LEKO-"+(slug(fullName())||"leko")+".htm", new Blob([$("#code").value],{type:"text/html;charset=utf-8"})); });
 $("#btn-m365").addEventListener("click", async ()=>{ const h=buildM365(); try{ await navigator.clipboard.writeText(h); setStatus("Code pour règle de flux copié ("+h.length+" caractères)."); }catch(e){ prompt("Copiez ce code :", h); } });
 
+(function(){ if(!(/^https?:$/.test(location.protocol) && /github\.io$/.test(location.hostname))){ const b=$("#local-banner"); if(b){ b.style.display="block"; $("#local-banner-link").href=ONLINE_URL+(location.search||""); } } })();
 (function(){ try{ const has=document.fonts && document.fonts.check('12px "Neue Haas Grotesk Display Pro"'); $("#fontinfo").textContent = has ? "Police Neue Haas Grotesk détectée sur ce poste (les destinataires sans la police verront Helvetica/Arial)." : "Neue Haas Grotesk non installée : aperçu en Helvetica/Arial, comme chez la majorité des destinataires."; }catch(e){} })();
 syncForm(); render();
 if(Object.keys(fromQuery).length){ setStatus("Champs pré-remplis depuis le lien reçu. Vérifiez-les, puis cliquez « Copier la signature »."); }
