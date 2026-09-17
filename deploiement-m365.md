@@ -34,7 +34,7 @@ Set-User -Identity prenom@lekolabs.com -Notes "Directeur de Création & Marque"
 
 1. Ouvrir le générateur, régler thème, taille et, si souhaité, cocher **9 · Ajouter la version mobile**. Laisser le thème sur **Clair** ou **Sombre** (le thème automatique ajoute un second bloc de style et alourdit le code).
 2. En bas de la page, section **Déploiement centralisé**, cliquer **Copier le code pour une règle de flux M365**. Le compteur doit rester sous 5 000 caractères.
-3. Coller ce code dans un fichier texte `signature-m365.html` pour archive. Un fichier prêt à l'emploi est livré dans ce dossier (design V8, plan 15, thème clair, 100 % : 1 455 caractères).
+3. Coller ce code dans un fichier texte `signature-m365.html` pour archive. Un fichier prêt à l'emploi est livré dans ce dossier (design V8, plan 15, thème clair, 100 % : 1 518 caractères).
 
 Le code contient les jetons à la place des valeurs saisies et le marqueur invisible `LEKO-SIG-2026`.
 
