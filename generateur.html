@@ -129,6 +129,10 @@
       <input id="f-assets" type="url" data-key="assets" placeholder="https://hadr1enhouyez.github.io/leko-signature/assets/v7/">
       <div class="hint">Déjà en place sur GitHub Pages. Indispensable pour Gmail et Outlook Windows (les images en base64 n'y sont pas affichées).</div>
       <div id="assets-status" class="hint"></div>
+      <label for="f-tileurl">URL de <strong>votre</strong> tuile noire hébergée (optionnel)</label>
+      <input id="f-tileurl" type="url" data-key="tileUrl" placeholder="https://hadr1enhouyez.github.io/leko-signature/assets/v7/tuiles/prenom-nom.png">
+      <div class="hint">La tuile (nom, champs, logo) est une <strong>image générée ici</strong>, propre à chaque personne. Sans URL, elle est intégrée au code : Outlook (Windows, Mac) et Apple Mail l'embarquent au collage. Gmail exige une image hébergée : téléchargez la tuile (bouton sous l'aperçu), faites-la déposer dans le dossier <code>assets/v7/tuiles/</code> du dépôt, puis indiquez son URL ici.</div>
+      <div id="tile-status" class="hint"></div>
     </div>
 
     <div class="card">
@@ -173,6 +177,7 @@
         <button id="btn-copy" class="green">Copier la signature</button>
         <button id="btn-copy-html" class="secondary">Copier le code HTML</button>
         <button id="btn-dl-html" class="secondary">Télécharger signature.htm</button>
+        <button id="btn-dl-tile" class="secondary" title="Image PNG ×3 de la tuile noire (nom, champs, logo), à héberger pour Gmail">Télécharger la tuile PNG</button>
         <button id="btn-link" class="secondary" title="Copie une adresse du générateur avec tous les champs déjà renseignés">Copier un lien pré-rempli</button>
       </div>
       <div id="link-note"></div>
@@ -232,7 +237,7 @@
         <summary>Déploiement centralisé (IT) — règle de flux Microsoft 365</summary>
         <ol>
           <li>Une règle de flux Exchange Online ajoute le code à tous les mails au moment de l'envoi : plus rien à coller pour personne. Procédure dans <code>deploiement-m365.md</code>, script <code>deploiement-m365.ps1</code>.</li>
-          <li>Le bouton ci-dessous produit le code compact avec les jetons d'annuaire <code>%%FirstName%%</code>, <code>%%LastName%%</code>, <code>%%Title%%</code> (champ 1), <code>%%Notes%%</code> (champ 2). Limite Microsoft : 5 000 caractères.</li>
+          <li>La tuile y reste en HTML (texte réel) car une règle de flux ne peut pas contenir une image par personne ; c'est la seule configuration où la tuile n'est pas une image. Le bouton ci-dessous produit le code compact avec les jetons d'annuaire <code>%%FirstName%%</code>, <code>%%LastName%%</code>, <code>%%Title%%</code> (champ 1), <code>%%Notes%%</code> (champ 2). Limite Microsoft : 5 000 caractères.</li>
         </ol>
         <div class="actions" style="margin-top:6px"><button id="btn-m365" class="secondary">Copier le code pour une règle de flux M365</button><span id="m365-count" class="hint" style="align-self:center"></span></div>
       </details>
@@ -272,10 +277,11 @@ const DEFAULTS = {
   url:"https://www.lekolabs.com",
   theme:"light", visualMode:"default", visualName:"", visualUrl:"",
   assets:"https://hadr1enhouyez.github.io/leko-signature/assets/v7/",
+  tileUrl:"",
   preset:"faithful", scale:"1", webfont:false
 };
-const STORE_KEY="leko-signature-2026-v7c";
-const SHARE_KEYS=["firstName","lastName","title1","title2","url","theme","scale","assets","webfont","visualMode","visualUrl"];
+const STORE_KEY="leko-signature-2026-v7d";
+const SHARE_KEYS=["firstName","lastName","title1","title2","url","theme","scale","assets","webfont","visualMode","visualUrl","tileUrl"];
 function stateFromQuery(){
   const q=new URLSearchParams(location.search), o={};
   SHARE_KEYS.forEach(k=>{ if(q.has(k)){ const v=q.get(k); o[k] = (k==="webfont") ? (v==="1"||v==="true") : v; } });
@@ -288,6 +294,40 @@ let customVisualDataUrl = null, customPhoto = null;
 const ctaImg = new Image(); ctaImg.src = EMBED.ctaShadow;
 
 const $ = s => document.querySelector(s);
+// Polices embarquées pour le rendu de la tuile en image (identique sur tous les postes, même sans Neue Haas installée)
+const TILE_FONT="LEKO Neue Haas";
+const fontsReady=(async()=>{ try{
+  const fm=new FontFace(TILE_FONT, 'url('+EMBED.fontMedium+')', {weight:"600"}); const fr=new FontFace(TILE_FONT, 'url('+EMBED.fontRoman+')', {weight:"400"});
+  await Promise.all([fm.load(), fr.load()]); document.fonts.add(fm); document.fonts.add(fr); return true; }catch(e){ console.warn("fonts", e); return false; } })();
+const logoWhiteImg=new Image(); logoWhiteImg.src=EMBED.logoWhite; const logoBlackImg=new Image(); logoBlackImg.src=EMBED.logoBlack;
+const logosReady=Promise.all([logoWhiteImg,logoBlackImg].map(im=>im.complete?Promise.resolve():new Promise(r=>{im.onload=r; im.onerror=r;})));
+const tileCache={};
+// Géométrie du plan de travail 03 (px à 100 %) : origines de texte et logo mesurées sur le fichier Illustrator
+const TILE_LAYOUT={nameX:17.955,nameBase:55.4,nameSize:12.5,titleX:17.955,titleBase:[65.4,74.4],titleSize:9,titleTracking:0.2,logoX:256.45,logoY:45.15,logoW:114,logoH:31,maxTextW:230};
+function drawText(ctx,text,x,y,tracking){ if(!tracking){ ctx.fillText(text,x,y); return; } let cx=x; for(const ch of text){ ctx.fillText(ch,cx,y); cx+=ctx.measureText(ch).width+tracking; } }
+function textWidth(ctx,text,tracking){ let w=0; for(const ch of text){ w+=ctx.measureText(ch).width+(tracking||0); } return w-(tracking||0); }
+function drawTile(theme){
+  const d=dims(), K=3, s=d.s, key=[theme,s,state.firstName,state.lastName,state.title1,state.title2].join("|");
+  if(tileCache[key]) return tileCache[key];
+  const W=d.tileW*K, H=d.tileH*K, c=document.createElement("canvas"); c.width=W; c.height=H; const ctx=c.getContext("2d");
+  const bg = theme==="dark" ? "#ffffff" : "#000000", fg = theme==="dark" ? "#000000" : "#ffffff";
+  roundedPath(ctx,0,0,W,H,d.radius*K); ctx.fillStyle=bg; ctx.fill();
+  ctx.fillStyle=fg; ctx.textBaseline="alphabetic";
+  const L=TILE_LAYOUT, u=s*K, maxW=L.maxTextW*u;
+  const fam='"'+TILE_FONT+'","Neue Haas Grotesk Display Pro","Helvetica Neue",Helvetica,Arial,sans-serif';
+  const name=[state.firstName,state.lastName].map(x=>String(x||"").trim()).filter(Boolean).join(" ");
+  let fs=L.nameSize*u; ctx.font='600 '+fs+'px '+fam;
+  while(textWidth(ctx,name,0)>maxW && fs>7*u){ fs-=0.5*u; ctx.font='600 '+fs+'px '+fam; }
+  drawText(ctx,name,L.nameX*u,L.nameBase*u,0);
+  const lines=[state.title1,state.title2].map(x=>String(x||"").trim()).filter(Boolean);
+  lines.forEach((line,i)=>{ let ts=L.titleSize*u; ctx.font='400 '+ts+'px '+fam; let tr=L.titleTracking*u;
+    while(textWidth(ctx,line,tr)>maxW && ts>6*u){ ts-=0.5*u; ctx.font='400 '+ts+'px '+fam; tr=L.titleTracking*u*(ts/(L.titleSize*u)); }
+    drawText(ctx,line,L.titleX*u,L.titleBase[i]*u,tr); });
+  const logo = theme==="dark" ? logoBlackImg : logoWhiteImg;
+  if(logo.complete && logo.naturalWidth) ctx.drawImage(logo, L.logoX*u, L.logoY*u, L.logoW*u, L.logoH*u);
+  const url=c.toDataURL("image/png"); tileCache[key]=url; return url;
+}
+function tileAlt(){ return [ [state.firstName,state.lastName].map(x=>String(x||"").trim()).filter(Boolean).join(" "), state.title1, state.title2 ].map(x=>String(x||"").trim()).filter(Boolean).join(" — ")+" — LEKO"; }
 const esc = s => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const escAttr = s => esc(s).replace(/'/g,"&#39;");
 function slug(s){return String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
@@ -342,26 +382,28 @@ function textTable(v,p,d,ptLogo,logo){
     +   '<td width="'+d.logoW+'" valign="top" align="right" style="width:'+d.logoW+'px;padding:'+ptLogo+'px 0 0 0;line-height:0;font-size:0;text-align:right;">'+logo+'</td></tr>'
     + '</table>';
 }
-// Tuile : une seule cellule à coins arrondis CSS (clients modernes) ; tranches d'images réservées à Outlook Windows via commentaire conditionnel.
-function tileRow(theme, src, d, p, v){
-  const black = theme==="dark" ? {top:src.topWhite, bottom:src.bottomWhite} : {top:src.topBlack, bottom:src.bottomBlack};
-  const logo=logoImg(theme, src, d);
-  const std='<td class="lk-tile" width="'+d.tileW+'" height="'+d.tileH+'" bgcolor="'+v.TILE_BG+'" valign="top" style="width:'+d.tileW+'px;height:'+d.tileH+'px;background-color:'+v.TILE_BG+';border-radius:'+d.radius+'px;-webkit-border-radius:'+d.radius+'px;padding:0 '+d.padR+'px 0 '+d.padL+'px;">'+textTable(v,p,d,p.PT_LOGO,logo)+'</td>';
-  const cell=(inner)=>'<td width="'+d.tileW+'" style="width:'+d.tileW+'px;padding:0;line-height:0;font-size:0;">'+inner+'</td>';
-  const mso='<td width="'+d.tileW+'" valign="top" style="width:'+d.tileW+'px;padding:0;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.tileW+'" style="width:'+d.tileW+'px;border-collapse:collapse;border-spacing:0;">'
-    + '<tr>'+cell(imgTag(black.top,d.tileW,d.topH,""))+'</tr>'
-    + '<tr><td class="lk-tile" width="'+d.tileW+'" height="'+d.midH+'" bgcolor="'+v.TILE_BG+'" valign="top" style="width:'+d.tileW+'px;height:'+d.midH+'px;background-color:'+v.TILE_BG+';padding:0 '+d.padR+'px 0 '+d.padL+'px;">'+textTable(v,p,d,Math.max(0,p.PT_LOGO-d.topH),logo)+'</td></tr>'
-    + '<tr>'+cell(imgTag(black.bottom,d.tileW,d.botH,""))+'</tr>'
-    + '</table></td>';
-  return '<tr><!--[if mso]>'+mso+'<![endif]--><!--[if !mso]><!-->'+std+'<!--<![endif]--></tr>';
+// Tuile : image PNG générée (nom, champs, logo) — identique dans tous les clients, Outlook Windows compris.
+function tileRow(theme, src, d, p, v, forExport){
+  const hosted = (state.tileUrl||"").trim();
+  const srcOf=(th)=> (forExport && hosted) ? hosted : drawTile(th);
+  const img=(th,cls,hidden)=>'<img'+(cls?' class="'+cls+'"':'')+' src="'+escAttr(srcOf(th))+'" width="'+d.tileW+'" height="'+d.tileH+'" alt="'+esc(tileAlt())+'" border="0" style="display:'+(hidden?'none':'block')+';width:'+d.tileW+'px;height:'+d.tileH+'px;border:0;outline:none;text-decoration:none;'+(hidden?'mso-hide:all;':'')+'">';
+  let inner;
+  if(theme==="auto" && !hosted) inner = img("light","lk-l")+'<!--[if !mso]><!--><div class="lk-d" style="display:none;mso-hide:all;max-height:0;overflow:hidden;line-height:0;font-size:0;">'+img("dark","lk-d",true)+'</div><!--<![endif]-->';
+  else inner = img(theme==="dark"?"dark":"light");
+  return '<tr><td class="lk-tile" width="'+d.tileW+'" style="width:'+d.tileW+'px;padding:0;line-height:0;font-size:0;">'+inner+'</td></tr>';
 }
-function signatureTable(theme, src, d, p, v){
+// Tuile en HTML (texte réel) : utilisée uniquement pour l'export « règle de flux M365 », qui ne peut pas contenir d'image par personne.
+function tileRowText(theme, src, d, p, v){
+  const logo=logoImg(theme, src, d);
+  return '<tr><td class="lk-tile" width="'+d.tileW+'" height="'+d.tileH+'" bgcolor="'+v.TILE_BG+'" valign="top" style="width:'+d.tileW+'px;height:'+d.tileH+'px;background-color:'+v.TILE_BG+';border-radius:'+d.radius+'px;padding:0 '+d.padR+'px 0 '+d.padL+'px;">'+textTable(v,p,d,p.PT_LOGO,logo)+'</td></tr>';
+}
+function signatureTable(theme, src, d, p, v, forExport, textTile){
   const visual='<tr><td width="'+d.visW+'" style="width:'+d.visW+'px;padding:0;line-height:0;font-size:0;"><a href="'+v.URL+'" target="_blank" style="display:block;text-decoration:none;border:0;"><img src="'+v.IMG+'" width="'+d.visW+'" height="'+d.visH+'" alt="LEKO — lekolabs.com" title="Découvrir LEKO" border="0" style="display:block;width:'+d.visW+'px;height:'+d.visH+'px;border:0;outline:none;text-decoration:none;"></a></td></tr>';
   const spacer='<tr><td height="'+d.gap+'" style="height:'+d.gap+'px;padding:0;font-size:1px;line-height:1px;mso-line-height-rule:exactly;">&nbsp;</td></tr>';
   return '<table class="lk-sig" role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.outerW+'" style="width:'+d.outerW+'px;min-width:'+d.outerW+'px;border-collapse:collapse;border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">'
     + '<tr><td valign="top" style="padding:'+d.pad+'px;">'
     + '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="'+d.tileW+'" style="width:'+d.tileW+'px;border-collapse:collapse;border-spacing:0;">'
-    + tileRow(theme, src, d, p, v) + spacer + visual
+    + (textTile ? tileRowText(theme, src, d, p, v) : tileRow(theme, src, d, p, v, forExport)) + spacer + visual
     + '</table></td></tr></table>';
 }
 const AUTO_STYLE = '<style type="text/css">\n@media (prefers-color-scheme: dark){\n  .lk-tile{background-color:#ffffff !important;}\n  .lk-txt,.lk-txt a{color:#000000 !important;}\n  .lk-l{display:none !important;}\n  .lk-d{display:block !important;max-height:none !important;overflow:visible !important;}\n}\n[data-ogsb] .lk-tile,[data-ogsc] .lk-tile{background-color:#ffffff !important;}\n[data-ogsc] .lk-txt,[data-ogsc] .lk-txt a{color:#000000 !important;}\n[data-ogsc] .lk-l{display:none !important;}\n[data-ogsc] .lk-d{display:block !important;max-height:none !important;overflow:visible !important;}\n</style>\n';
@@ -384,7 +426,11 @@ function buildHtml(forExport, themeOverride){
   const src=imageSources(forExport), d=dims(), p=scaledPreset(PRESETS[state.preset]||PRESETS.faithful, d.s);
   const theme = themeOverride || state.theme || "light";
   const style = fontStyle() + (theme==="auto" ? AUTO_STYLE : "");
-  return (style + signatureTable(theme, src, d, p, vars(theme, src))).trim();
+  return (style + signatureTable(theme, src, d, p, vars(theme, src), forExport, false)).trim();
+}
+function buildHtmlText(theme){
+  const src=imageSources(true), d=dims(), p=scaledPreset(PRESETS.faithful, d.s); theme=theme||"light";
+  return signatureTable(theme, src, d, p, vars(theme, src), true, true);
 }
 function fullDocument(inner){
   return '<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<meta name="color-scheme" content="light dark">\n<meta name="supported-color-schemes" content="light dark">\n<meta name="x-apple-disable-message-reformatting">\n<!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->\n<title>Signature LEKO</title>\n</head>\n<body style="margin:0;padding:0;">\n'+inner+'\n</body>\n</html>\n';
@@ -392,7 +438,7 @@ function fullDocument(inner){
 // Export pour règle de flux Microsoft 365 : minifié (limite 5 000 caractères), jetons d'annuaire, marqueur anti-doublon.
 const M365_MARK='LEKO-SIG-2026';
 function buildM365(){
-  let h = buildHtml(true);
+  let h = buildHtmlText(state.theme==="dark" ? "dark" : "light");
   h = h.replace(/<!--\[if mso\]>[\s\S]*?<!\[endif\]-->/g,"").replace(/<!--\[if !mso\]><!-->/g,"").replace(/<!--<!\[endif\]-->/g,"")
        .replace(/ role="presentation"/g,"").replace(/outline:none;text-decoration:none;/g,"").replace(/-webkit-border-radius:[^;]+;/g,"")
        .replace(/mso-line-height-rule:exactly;/g,"").replace(/letter-spacing:0\.\d+px;/g,"").replace(/mso-table-lspace:0pt;mso-table-rspace:0pt;/g,"")
@@ -409,7 +455,10 @@ function buildM365(){
 }
 function updateM365Count(){ const el=$("#m365-count"); const n=buildM365().length; el.textContent=n.toLocaleString("fr-FR")+" / 5 000 caractères"+(n>5000?" — trop long : choisissez le thème Clair ou Sombre":""); el.style.color = n>5000 ? "var(--bad-ink)" : "var(--ok-ink)"; }
 
-function render(){
+let renderQueued=false;
+async function render(){
+  await fontsReady; await logosReady;
+  if(renderQueued) return; renderQueued=true; await Promise.resolve(); renderQueued=false;
   $("#custom-box").hidden = state.visualMode!=="custom";
   $("#url-box").hidden = state.visualMode!=="url";
   $("#simdark-label").style.display = state.theme==="auto" ? "" : "none";
@@ -426,7 +475,11 @@ function render(){
   if(!src.hosted) notes.push('<div class="note warn"><strong>Images non hébergées.</strong> L\'aperçu et l\'export utilisent des images intégrées (base64) : utilisable pour un test dans Apple Mail ou Outlook Mac, mais <strong>Gmail et Outlook Windows n\'afficheront pas les images</strong>. Renseignez l\'URL du dossier hébergé à l\'étape 5.</div>');
   if(state.visualMode==="custom" && src.hosted) notes.push('<div class="note ok">Le code exporté pointe vers <code>'+esc(src.visual)+'</code>. Pensez à y déposer le visuel téléchargé.</div>');
   if(state.visualMode==="url" && !state.visualUrl.trim()) notes.push('<div class="note bad">Indiquez l\'URL du visuel (étape 4).</div>');
+  const hostedTile=(state.tileUrl||"").trim();
+  if(!hostedTile) notes.push('<div class="note warn"><strong>Tuile intégrée au code (image ×3, environ '+Math.round(drawTile(state.theme==="dark"?"dark":"light").length*0.75/1024)+' Ko).</strong> Outlook et Apple Mail l\'embarquent au collage. Pour Gmail, hébergez la tuile (bouton « Télécharger la tuile PNG », dossier <code>assets/v7/tuiles/</code>) et indiquez son URL à l\'étape 5.</div>');
   $("#export-note").innerHTML = notes.join("");
+  $("#tile-status").innerHTML = hostedTile ? '<span class="imgcheck" id="tilecheck">vérification…</span>' : "";
+  if(hostedTile){ const im=new Image(); im.onload=()=>{const el=$("#tilecheck"); if(el){el.className="imgcheck "+(im.naturalWidth===dims().tileW*3?"ok":"bad"); el.textContent="tuile hébergée "+im.naturalWidth+"×"+im.naturalHeight+(im.naturalWidth===dims().tileW*3?" ✓":" — attendu "+(dims().tileW*3)+"×"+(dims().tileH*3));}}; im.onerror=()=>{const el=$("#tilecheck"); if(el){el.className="imgcheck bad"; el.textContent="tuile introuvable à cette URL";}}; im.src=hostedTile+(hostedTile.includes("?")?"&":"?")+"_="+Date.now(); }
   $("#font-note").innerHTML = state.webfont ? '<div class="note ok">Le code contient les déclarations <code>@font-face</code> (masquées à Outlook Windows, qui reçoit Arial pour éviter son repli en Times New Roman).</div>' : "";
   $("#theme-note").innerHTML = state.theme==="auto" ? '<div class="note warn">Le thème automatique repose sur un bloc <code>&lt;style&gt;</code> que les éditeurs de signature suppriment ou affichent en texte au collage. Le bouton « Copier la signature » copie donc la <strong>version claire</strong> ; le thème automatique n\'est présent que dans « Télécharger signature.htm » et « Copier le code HTML », pour une installation par fichier (Outlook Windows, Apple Mail) ou par outil serveur.</div>' : "";
   checkAssets(); updateM365Count(); saveState();
@@ -525,6 +578,7 @@ $("#btn-link").addEventListener("click", async ()=>{
 });
 $("#btn-copy").addEventListener("click", copyRich);
 $("#btn-copy-html").addEventListener("click", async ()=>{ try{ await navigator.clipboard.writeText($("#code").value); setStatus("Code HTML copié."); }catch(e){ $("#code").select(); document.execCommand("copy"); setStatus("Code HTML copié."); } });
+$("#btn-dl-tile").addEventListener("click", ()=>{ const th=state.theme==="dark"?"dark":"light"; download("tuile-"+(slug(fullName())||"leko")+(th==="dark"?"-sombre":"")+".png", dataUrlToBlob(drawTile(th))); });
 $("#btn-dl-html").addEventListener("click", ()=>{ download("signature-LEKO-"+(slug(fullName())||"leko")+".htm", new Blob([$("#code").value],{type:"text/html;charset=utf-8"})); });
 $("#btn-m365").addEventListener("click", async ()=>{ const h=buildM365(); try{ await navigator.clipboard.writeText(h); setStatus("Code pour règle de flux copié ("+h.length+" caractères)."); }catch(e){ prompt("Copiez ce code :", h); } });
 

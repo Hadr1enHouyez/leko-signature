@@ -4,6 +4,8 @@ Une règle de flux Exchange Online (« Appliquer une clause ») ajoute le code H
 
 Source : [Organization-wide message disclaimers, signatures, footers, or headers in Exchange Online](https://learn.microsoft.com/en-us/exchange/security-and-compliance/mail-flow-rules/disclaimers-signatures-footers-or-headers) et [New-TransportRule](https://learn.microsoft.com/en-us/powershell/module/exchangepowershell/new-transportrule).
 
+> **Différence avec la signature collée** : depuis le 17 septembre 2026, le générateur rend la tuile noire en **image** pour le collage manuel. Une règle de flux ne peut pas produire une image par personne, donc l'export « Microsoft 365 » garde une **tuile en texte HTML** (jetons d'annuaire, bloc conditionnel Outlook pour les angles). Son rendu dans Outlook Windows dépend du moteur Word : coins carrés et interlignes approximatifs sont possibles.
+
 ## Ce qu'il faut savoir avant de commencer
 
 | Point | Détail |
@@ -21,7 +23,6 @@ Dans le centre d'administration Microsoft 365 (`admin.microsoft.com` › Utilisa
 
 - **Prénom** et **Nom** : affichés sur deux lignes.
 - **Fonction** (Job title) : fonction en anglais, première ligne.
-- **Téléphone mobile** : au format international avec espaces, par exemple `+352 691 000 000`.
 
 La seconde ligne (fonction en français) utilise le champ **Notes**, absent de l'interface Microsoft 365 : le renseigner dans le centre d'administration Exchange (`admin.exchange.microsoft.com` › Destinataires › Boîtes aux lettres › boîte › Général › Notes) ou en PowerShell :
 
