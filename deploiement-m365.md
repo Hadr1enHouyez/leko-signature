@@ -4,7 +4,7 @@ Une règle de flux Exchange Online (« Appliquer une clause ») ajoute le code H
 
 Source : [Organization-wide message disclaimers, signatures, footers, or headers in Exchange Online](https://learn.microsoft.com/en-us/exchange/security-and-compliance/mail-flow-rules/disclaimers-signatures-footers-or-headers) et [New-TransportRule](https://learn.microsoft.com/en-us/powershell/module/exchangepowershell/new-transportrule).
 
-> **Différence avec la signature collée** : depuis le 17 septembre 2026, le générateur rend la tuile noire en **image** pour le collage manuel. Une règle de flux ne peut pas produire une image par personne, donc l'export « Microsoft 365 » garde une **tuile en texte HTML** (jetons d'annuaire, bloc conditionnel Outlook pour les angles). Son rendu dans Outlook Windows dépend du moteur Word : coins carrés et interlignes approximatifs sont possibles.
+> **Plan 07 (17 septembre 2026)** : le texte de la signature est en HTML réel et les deux images sont fixes, donc l'export « Microsoft 365 » produit exactement la même signature que le collage manuel, avec les jetons d'annuaire à la place du nom et de la fonction. Le jeton `%%Notes%%` n'apparaît que si une seconde ligne est renseignée dans le générateur.
 
 ## Ce qu'il faut savoir avant de commencer
 
@@ -12,7 +12,7 @@ Source : [Organization-wide message disclaimers, signatures, footers, or headers
 |---|---|
 | Droits | Administrateur Exchange (rôle « Mail flow » / Gestion de l'organisation) sur le tenant Microsoft 365 de LEKO. |
 | Limite de taille | 5 000 caractères pour le texte de la clause. Le générateur produit un code compact et affiche le compteur. |
-| Champs dynamiques | Jetons d'annuaire remplacés à l'envoi : `%%FirstName%%`, `%%LastName%%`, `%%Title%%` (champ 1), `%%Notes%%` (champ 2). La fonction en français est lue dans le champ **Notes** de l'utilisateur, à renseigner pour chacun (voir plus bas). |
+| Champs dynamiques | Jetons d'annuaire remplacés à l'envoi : `%%FirstName%%`, `%%LastName%%`, `%%Title%%` (fonction) et, si une seconde ligne est renseignée, `%%Notes%%`. La fonction en français est lue dans le champ **Notes** de l'utilisateur, à renseigner pour chacun (voir plus bas). |
 | Position | La clause est ajoutée **à la fin du corps du message**. Dans une réponse, elle se retrouve donc sous le message cité, pas sous le texte tapé. C'est la limite principale de cette méthode, que les outils payants (Exclaimer, CodeTwo) contournent avec un complément Outlook. |
 | Brouillon | L'expéditeur ne voit pas la signature en rédigeant ; elle apparaît dans le message reçu et dans « Éléments envoyés ». |
 | Doublons | Une exception sur un marqueur invisible (`LEKO-SIG-2026`, présent dans le code) évite d'ajouter la signature à chaque réponse du fil. |
@@ -34,7 +34,7 @@ Set-User -Identity prenom@lekolabs.com -Notes "Directeur de Création & Marque"
 
 1. Ouvrir le générateur, régler thème, taille et, si souhaité, cocher **9 · Ajouter la version mobile**. Laisser le thème sur **Clair** ou **Sombre** (le thème automatique ajoute un second bloc de style et alourdit le code).
 2. En bas de la page, section **Déploiement centralisé**, cliquer **Copier le code pour une règle de flux M365**. Le compteur doit rester sous 5 000 caractères.
-3. Coller ce code dans un fichier texte `signature-m365.html` pour archive. Un fichier prêt à l'emploi est livré dans ce dossier (design V7, plan 03, thème clair, 100 % : 1 723 caractères).
+3. Coller ce code dans un fichier texte `signature-m365.html` pour archive. Un fichier prêt à l'emploi est livré dans ce dossier (design V7, plan 07, thème clair, 100 % : 1 480 caractères).
 
 Le code contient les jetons à la place des valeurs saisies et le marqueur invisible `LEKO-SIG-2026`.
 
