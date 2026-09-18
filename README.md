@@ -1,28 +1,28 @@
-# LEKO — Signature mail 2026 V8 (plan de travail 15)
+# LEKO — Signature mail 2026 V8 (plan de travail 14)
 
-Signature HTML de **376 × 213 px**, construite à partir de `Artwork/Signature_Mail_LEKO_2026_V7.ai`, plan de travail 15 (source ×2 = 873,62 × 444,71, fichier du 17 septembre 2026, 21 h 27). V8 reprend le texte et le visuel de la V7 (plan 07) et y ajoute une **tuile noire verticale séparée** (quatre angles arrondis, logo LEKO tourné à 90°) à 3 px du visuel (2,5 dans le fichier). L'ombre portée du plan 15 a été **retirée** à la demande de Hadrien (17 septembre 2026, 22 h). Le dossier `LEKO_Signature_2026_V7` reste en archive. Une seule mise en page pour tous les appareils : elle tient dans la zone de lecture des téléphones sans réduction. Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iOS/Android.
+Signature HTML de **368 × 208 px**, construite à partir de `Artwork/Signature_Mail_LEKO_2026_V7.ai`, plan de travail 14 (source ×2 = 873,62 × 441,23, fichier du 18 septembre 2026, 14 h 38). V8 reprend le texte et le visuel de la V7 (plan 07) et y ajoute une **tuile noire verticale séparée** (quatre angles arrondis, logo LEKO tourné à 90° en bas de la tuile) à 5 px du visuel. **Texte et visuel sont justifiés ensemble à gauche, sans aucune marge** : la signature s'aligne sur le texte du corps du mail. Le dossier `LEKO_Signature_2026_V7` reste en archive. Une seule mise en page pour tous les appareils : elle tient dans la zone de lecture des téléphones sans réduction. Compatible Outlook (classique et nouveau, Windows et Mac), Gmail, Apple Mail, iOS/Android.
 
 Générateur en ligne : **https://hadr1enhouyez.github.io/leko-signature/generateur.html**
 
 ## La mise en page
 
 ```
-┌────────────────────────────────────────────────┐
-│  Prénom Nom                 (Medium 15 px)     │
-│  Fonction                   (Roman 12,5 px)    │
-│                             (espace 22 px)     │
-│ ┌──────────────────────────────┐ ┌────┐        │
-│ │ visuel 319 × 143, coins 6,8  │ │ LE │        │
-│ │ CTA Revolt Green (bas droit) │ │ KO │ 44 ×   │
-│ │                              │ │    │ 143    │
-│ └──────────────────────────────┘ └────┘        │
-└────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│Prénom Nom                 (Medium 15 px)     │
+│Fonction                   (Roman 12,5 px)    │
+│                           (espace 22 px)     │
+│┌──────────────────────────────┐   ┌────┐     │
+││ visuel 319 × 143, coins 6,8  │   │    │     │
+││ CTA Revolt Green (bas droit) │   │ LE │ 44 ×│
+││                              │   │ KO │ 143 │
+│└──────────────────────────────┘   └────┘     │
+└──────────────────────────────────────────────┘
 ```
 
-- **Texte en haut à gauche, en texte réel** sur le fond du mail : rien qu'Outlook Windows puisse déformer. Deux lignes de texte, puis deux images.
-- **Deux images fixes, identiques pour tout le monde** : le visuel 319 × 143 (CTA intégré, sans ombre) et la tuile verticale 44 × 143 (quatre angles arrondis 6,25 px, logo LEKO tourné), séparées par une cellule de 3 px. Les deux images sont cliquables vers l'URL choisie.
-- Géométrie du plan 15 (px à 100 %, mesurée depuis le bord du visuel) : texte à 8,2 px du bord gauche du visuel ; nom Medium 12 px (ligne de base 22,4 depuis le haut du plan) ; fonction Roman 10 px (34,6) ; visuel 319,3 × 142,5 ; tuile 44,2 × 142,5 à 2,5 px du visuel. Les larges marges du plan et l'ombre portée ne sont pas reproduites ; marges de 5 px comme les versions précédentes.
-- **Réglages hérités de la V7, à la demande de Hadrien (17 septembre 2026)** : polices agrandies (nom 15 px / interligne 16, fonction 12,5 px / interligne 14), 22 px entre le texte et le visuel, CTA de 15 px de diamètre centré à 8,7 px des bords droit et bas du visuel (le fichier a un CTA de 18,35 px). Hauteur totale 213 px (227 avec seconde ligne). Rendu vérifié dans Chromium : texte à x = 13, lignes de base 25 et 39,5, visuel à (5, 65) en 319 × 143, tuile à (327, 65) en 44 × 143.
+- **Texte en haut à gauche, en texte réel** sur le fond du mail : rien qu'Outlook Windows puisse déformer. Deux lignes de texte, puis deux images. **Aucune marge** (`padding-left:0`) : le texte et le visuel partagent le même bord gauche, qui est celui du texte du corps du mail.
+- **Deux images fixes, identiques pour tout le monde** : le visuel 319 × 143 (CTA intégré) et la tuile verticale 44 × 143 (quatre angles arrondis 6,25 px, logo LEKO tourné, à 16,7 px du bas), séparées par une cellule de 5 px. Les deux images sont cliquables vers l'URL choisie.
+- Géométrie du plan 14 (px à 100 %) : texte à x = 0 du bord du visuel ; nom Medium 12 px (ligne de base 22,4 depuis le haut du plan) ; fonction Roman 10 px (34,6) ; visuel 319,3 × 142,5 ; tuile 44,2 × 142,5 à 5 px du visuel ; logo à 16,7 px du bas de la tuile. Les marges du plan (34 px à gauche et à droite, 30 en bas) servent à la présentation et ne sont pas reproduites.
+- **Réglages hérités de la V7, à la demande de Hadrien (17 septembre 2026)** : polices agrandies (nom 15 px / interligne 16, fonction 12,5 px / interligne 14), 22 px entre le texte et le visuel, CTA de 15 px de diamètre centré à 8,7 px des bords droit et bas du visuel (le fichier a un CTA de 18,35 px). Hauteur totale 208 px (222 avec seconde ligne). Rendu vérifié dans Chromium : glyphes du texte à x = 0, lignes de base 25 et 39,5, visuel à (0, 65) en 319 × 143, tuile à (324, 65) en 44 × 143.
 
 ## Contenu du dossier
 
@@ -39,19 +39,19 @@ Générateur en ligne : **https://hadr1enhouyez.github.io/leko-signature/generat
 
 | Fichier | Taille affichée | Résolution | Rôle |
 |---|---|---|---|
-| `visual-robotics@3x.png` / `.jpg` | 319 × 143 | ×3 (957 × 429) | Visuel par défaut (identique à `v7/visual-wide-robotics-4@3x`) : fenêtre `[68,31, 95,64]–[706,83, 380,64]` du plan 15 (même cadrage que les plans 06/07), Lanczos depuis la photo 2094 × 792, angles transparents 6,8 px, CTA 15 px ombré intégré à 26 px @3x des bords droit et bas. |
-| `logo-tile-tall-black@4x.png` / `logo-tile-tall-white@4x.png` | 44 × 143 | ×4 (176 × 572) | Tuile verticale : rendu du fichier (rectangle `[711,83, 95,64]–[800,31, 380,64]`, logo blanc tourné `[744,5, 144,8]–[767,6, 233]`), fond forcé noir pur, alpha = masque arrondi (rayon 12,51 ×2 = 6,25 px). Variante blanche par inversion RVB (thème sombre). |
+| `visual-robotics@3x.png` / `.jpg` | 319 × 143 | ×3 (957 × 429) | Visuel par défaut (identique à `v7/visual-wide-robotics-4@3x`) : fenêtre `[68,31, 95,64]–[706,83, 380,64]` du plan 14 (même cadrage que les plans 06/07), Lanczos depuis la photo 2094 × 792, angles transparents 6,8 px, CTA 15 px ombré intégré à 26 px @3x des bords droit et bas. |
+| `logo-tile-tall-2-black@4x.png` / `logo-tile-tall-2-white@4x.png` | 44 × 143 | ×4 (176 × 572) | Tuile verticale du plan 14 : rendu du fichier (rectangle `[716,83, 95,64]–[805,31, 380,64]`, logo blanc tourné `[749,5, 259,1]–[772, 347,3]`, en bas de la tuile), fond forcé noir pur, alpha = masque arrondi (rayon 12,51 ×2 = 6,25 px). Variante blanche par inversion RVB (thème sombre). |
 | `cta-shadow@3x.png` | — | ×3 (119 × 120) | CTA 15 px avec son ombre, posé par le générateur à (849, 322) sur les visuels personnalisés. |
-| `visual-shadow-robotics@3x.*`, `visual-shadow-frame@3x.png` (plan 15 avec ombre, 21 h 45), `logo-tile-side-*@4x.png` (plan 06, 18 h 30) | — | — | Conservés en ligne pour les signatures déjà collées, ne rien supprimer ni modifier. |
+| `logo-tile-tall-black/white@4x.png` (plan 15, logo en haut), `visual-shadow-robotics@3x.*`, `visual-shadow-frame@3x.png` (plan 15 avec ombre), `logo-tile-side-*@4x.png` (plan 06) | — | — | Conservés en ligne pour les signatures déjà collées, ne rien supprimer ni modifier. |
 
 Les dossiers `assets/v7/` et `assets/` (V6) restent en ligne pour les signatures déjà collées : ne rien supprimer ni modifier.
 
 ## Comment la signature est construite
 
 - **Tableaux HTML imbriqués et styles inline** uniquement : seule structure rendue à l'identique par le moteur Word d'Outlook Windows.
-- **Texte** : cellule à `padding:12px 5px 22px 13px`, nom en `font-weight:600` 15 px / interligne 16 px, fonction en `normal` 12,5 px / interligne 14 px (`mso-line-height-rule:exactly`), pas d'interlettrage (mesuré nul sur le fichier). Une seconde ligne optionnelle s'ajoute sous la fonction ; l'espace de 22 px sous le texte est fixe. Une fonction trop longue passe sur deux lignes et rehausse la signature : le générateur l'indique.
+- **Texte** : cellule à `padding:12px 0 22px 0`, nom en `font-weight:600` 15 px / interligne 16 px, fonction en `normal` 12,5 px / interligne 14 px (`mso-line-height-rule:exactly`), pas d'interlettrage (mesuré nul sur le fichier). Une seconde ligne optionnelle s'ajoute sous la fonction ; l'espace de 22 px sous le texte est fixe. Une fonction trop longue passe sur deux lignes et rehausse la signature : le générateur l'indique.
 - **Aucun fond** dans le code : la signature s'affiche sur le fond du mail. Le bouton « Copier la signature » écrit le code exact dans le presse-papiers (API Clipboard, ou événement `copy` en secours) : le fond gris de la page du générateur ne peut pas être emporté, contrairement à une copie par sélection à la souris.
-- **Images** : `width`/`height` fixes en attributs et en style, `display:block`. Jamais de `max-width:100%` ni `height:auto` dans une cellule de tableau (WebKit / Apple Mail résout le pourcentage à zéro et l'image disparaît). La tuile est dans une cellule de 44 px à droite du visuel, séparée par une cellule intercalaire de 3 px (`font-size:1px;line-height:1px`) ; la cellule extérieure a `padding:0 5px 5px 5px`.
+- **Images** : `width`/`height` fixes en attributs et en style, `display:block`. Jamais de `max-width:100%` ni `height:auto` dans une cellule de tableau (WebKit / Apple Mail résout le pourcentage à zéro et l'image disparaît). La tuile est dans une cellule de 44 px à droite du visuel, séparée par une cellule intercalaire de 5 px (`font-size:1px;line-height:1px`) ; la cellule extérieure n'a aucun padding, la signature commence au bord gauche du corps du mail.
 - **Largeur minimale** sur le tableau : empêche Gmail mobile d'écraser la mise en page.
 - **Netteté** : visuel ×3, tuile ×4, affichés à la taille ×1 par les attributs.
 - **Poids de police** : les fichiers Neue Haas installés déclarent Medium en 600 et Roman en 500 ; le nom est en `font-weight:600`, la fonction en `normal`. Pile `'Neue Haas Grotesk Display Pro', 'Neue Haas Display', 'Helvetica Neue', Helvetica, Arial`.
@@ -72,7 +72,7 @@ Le générateur charge les webfonts embarquées pour l'aperçu : la signature s'
 
 ## Taille d'affichage
 
-Par défaut 376 × 213 px, recommandée : elle s'affiche sans réduction sur les téléphones. L'étape 8 propose 125 % (470 × 266) et 150 % (566 × 320), qui seront réduits sur mobile. La « Loupe ×2 » de l'aperçu ne fait qu'agrandir l'affichage dans le générateur.
+Par défaut 368 × 208 px, recommandée : elle s'affiche sans réduction sur les téléphones. L'étape 8 propose 125 % (460 × 260) et 150 % (553 × 313), qui seront réduits sur mobile. La « Loupe ×2 » de l'aperçu ne fait qu'agrandir l'affichage dans le générateur.
 
 ## Mise en service
 
@@ -98,7 +98,7 @@ Par défaut 376 × 213 px, recommandée : elle s'affiche sans réduction sur les
 
 ## Régénérer les assets depuis Illustrator
 
-Le fichier `.ai` est compatible PDF (PyMuPDF), plan de travail 15 = page 15 (873,62 × 444,71 ; le fichier compte 16 plans). Visuel : chemin de découpe `[68,31, 95,64]–[706,83, 380,64]`, rayon 13,61 ; photo (xref 75, 2094 × 792) placée à `(-6,3, 90,86)`, échelle 0,39146 pt/px : même fenêtre source que les plans 06/07 (`[190,6, 10,6]–[1821,7, 741,8]`), rééchantillonnée en 957 × 429. Ombre du visuel (non utilisée depuis 22 h) : image xref 100 (681 × 328, masque xref 113) placée à `[46,86, 74,09]–[727,86, 402,09]`. Tuile : rectangle noir `[711,83, 95,64]–[800,31, 380,64]`, rayon 12,51, rendu à 176 × 572 après suppression des images ; logo blanc `[744,54, 144,76]–[767,6, 232,95]`. CTA : ombre xref 103 (98 × 98) avec masque, cercle Revolt Green centré `(655,16, 328,97)` rayon 18,35 ; en service à l'échelle 1,2265 (15 px) posé à `(849, 322)` dans le visuel. Texte : `François Cordier` NeueHaasDisplay-Medium 24,01 origine `(84,75, 44,78)` ; fonction NeueHaasDisplay-Roman 20,01 origine `(84,75, 69,2)`. La couche BG ne peut pas être masquée par `set_layer` : les découpes se font par masque géométrique.
+Le fichier `.ai` est compatible PDF (PyMuPDF), plan de travail 14 = page 14 (873,62 × 441,23 ; le fichier compte 17 plans). Visuel : chemin de découpe `[68,31, 95,64]–[706,83, 380,64]`, rayon 13,61 ; photo (xref 77, 2094 × 792) placée à `(-6,3, 90,86)`, échelle 0,39146 pt/px : même fenêtre source que les plans 06/07/15 (`[190,6, 10,6]–[1821,7, 741,8]`), rééchantillonnée en 957 × 429. Tuile : rectangle noir `[716,83, 95,64]–[805,31, 380,64]`, rayon 12,51, rendu à 176 × 572 après suppression des images ; logo blanc `[749,54, 259,12]–[771,98, 347,31]`. CTA : ombre xref 105 (98 × 98) avec masque, cercle Revolt Green centré `(655,16, 328,97)` rayon 18,35 ; en service à l'échelle 1,2265 (15 px) posé à `(849, 322)` dans le visuel. Texte : `François Cordier` NeueHaasDisplay-Medium 24,01 origine `(68,31, 44,78)` ; fonction NeueHaasDisplay-Roman 20,01 origine `(68,3, 69,2)` — même x que le bord du visuel. La couche BG ne peut pas être masquée par `set_layer` : les découpes se font par masque géométrique.
 
 ## Historique
 
@@ -108,3 +108,4 @@ Le fichier `.ai` est compatible PDF (PyMuPDF), plan de travail 15 = page 15 (873
 - **V8 plan 06 (17 septembre 2026, 18 h 30) : version actuelle.** Tuile verticale collée au visuel, logo LEKO tourné ; texte, visuel et CTA repris de la V7 réglée.
 - **V8 plan 15 (17 septembre 2026, 21 h 45) : version actuelle.** Ombre portée sous le visuel, tuile verticale séparée à quatre angles arrondis (2,5 px du visuel), signature 388 × 218.
 - **V8 plan 15 sans ombre (17 septembre 2026, 22 h) : version actuelle.** Ombre portée retirée ; visuel 319 × 143, écart 3 px, tuile verticale 44 × 143, signature 376 × 213.
+- **V8 plan 14 (18 septembre 2026, 15 h) : version actuelle.** Texte et visuel justifiés à gauche sans marge, écart 5 px, tuile verticale avec logo en bas, signature 368 × 208.

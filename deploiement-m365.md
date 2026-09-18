@@ -4,7 +4,7 @@ Une règle de flux Exchange Online (« Appliquer une clause ») ajoute le code H
 
 Source : [Organization-wide message disclaimers, signatures, footers, or headers in Exchange Online](https://learn.microsoft.com/en-us/exchange/security-and-compliance/mail-flow-rules/disclaimers-signatures-footers-or-headers) et [New-TransportRule](https://learn.microsoft.com/en-us/powershell/module/exchangepowershell/new-transportrule).
 
-> **V8 / plan 15 (17 septembre 2026)** : le texte de la signature est en HTML réel et les deux images sont fixes, donc l'export « Microsoft 365 » produit exactement la même signature que le collage manuel, avec les jetons d'annuaire à la place du nom et de la fonction. Le jeton `%%Notes%%` n'apparaît que si une seconde ligne est renseignée dans le générateur.
+> **V8 / plan 14 (18 septembre 2026)** : le texte de la signature est en HTML réel et les deux images sont fixes, donc l'export « Microsoft 365 » produit exactement la même signature que le collage manuel, avec les jetons d'annuaire à la place du nom et de la fonction. Le jeton `%%Notes%%` n'apparaît que si une seconde ligne est renseignée dans le générateur.
 
 ## Ce qu'il faut savoir avant de commencer
 
@@ -34,7 +34,7 @@ Set-User -Identity prenom@lekolabs.com -Notes "Directeur de Création & Marque"
 
 1. Ouvrir le générateur, régler thème, taille et, si souhaité, cocher **9 · Ajouter la version mobile**. Laisser le thème sur **Clair** ou **Sombre** (le thème automatique ajoute un second bloc de style et alourdit le code).
 2. En bas de la page, section **Déploiement centralisé**, cliquer **Copier le code pour une règle de flux M365**. Le compteur doit rester sous 5 000 caractères.
-3. Coller ce code dans un fichier texte `signature-m365.html` pour archive. Un fichier prêt à l'emploi est livré dans ce dossier (design V8, plan 15, thème clair, 100 % : 1 518 caractères).
+3. Coller ce code dans un fichier texte `signature-m365.html` pour archive. Un fichier prêt à l'emploi est livré dans ce dossier (design V8, plan 14, thème clair, 100 % : 1 519 caractères).
 
 Le code contient les jetons à la place des valeurs saisies et le marqueur invisible `LEKO-SIG-2026`.
 
